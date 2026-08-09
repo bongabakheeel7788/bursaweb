@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bursa — Menu</title>
-<meta name="description" content="Bursa — fire-baked pizzas, burgers, wings, pasta and the Bursa Bar. Full menu, call to order.">
+<title>Bursa — Menu &amp; Order</title>
+<meta name="description" content="Bursa — fire-baked pizzas, burgers, wings, pasta and the Bursa Bar. Browse the menu, build your order, and check out on WhatsApp.">
 <link rel="icon" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +20,7 @@
     --gold-bright:#ffd166;
     --red:#d62828;
     --red-bright:#f04141;
+    --green:#25D366;
     --cream:#f3ece0;
     --muted:#a89a86;
     --line:rgba(230,172,44,0.16);
@@ -51,6 +52,8 @@
   a{color:inherit; text-decoration:none;}
   img{max-width:100%; display:block;}
   ul{list-style:none;}
+  button{font:inherit; cursor:pointer;}
+  input, textarea{font:inherit;}
   :focus-visible{outline:2px solid var(--gold-bright); outline-offset:3px;}
 
   .container{max-width:1080px; margin:0 auto; padding:0 24px;}
@@ -73,7 +76,7 @@
   /* ---------- floating glass nav ---------- */
   .float-nav{
     position:fixed; top:16px; left:50%; transform:translateX(-50%);
-    z-index:50; width:calc(100% - 32px); max-width:820px;
+    z-index:50; width:calc(100% - 32px); max-width:860px;
     background:rgba(20,16,10,0.6);
     backdrop-filter:blur(18px) saturate(160%);
     -webkit-backdrop-filter:blur(18px) saturate(160%);
@@ -99,40 +102,50 @@
     text-transform:uppercase; letter-spacing:0.05em;
     color:var(--muted); white-space:nowrap;
     padding:8px 13px; border-radius:999px;
-    border:1px solid transparent;
+    border:1px solid transparent; background:none;
     transition:color .2s, border-color .2s, background .2s;
   }
   .nav-link:hover{color:var(--cream);}
   .nav-link.active{color:var(--bg); background:var(--gold); border-color:var(--gold);}
 
-  .nav-quick-actions{display:flex; gap:6px; flex-shrink:0; padding-left:6px; border-left:1px solid var(--line);}
+  .nav-quick-actions{display:flex; gap:6px; flex-shrink:0; padding-left:6px; border-left:1px solid var(--line); align-items:center;}
   .quick-icon{
-    width:36px; height:36px; border-radius:50%; flex-shrink:0;
+    width:36px; height:36px; border-radius:50%; flex-shrink:0; border:none;
     display:flex; align-items:center; justify-content:center;
     color:#fff; transition:transform .2s, filter .2s;
+    position:relative;
   }
   .quick-icon svg{width:16px; height:16px;}
   .quick-icon:hover{transform:scale(1.08); filter:brightness(1.15);}
-  .quick-icon.wa{background:#25D366;}
+  .quick-icon.wa{background:var(--green);}
   .quick-icon.call{background:var(--red);}
+  .quick-icon.cart-icon{background:var(--gold); color:var(--bg);}
   @media(max-width:640px){.nav-quick-actions{display:none;}}
+
+  .cart-count{
+    position:absolute; top:-4px; right:-4px;
+    min-width:18px; height:18px; padding:0 4px; border-radius:999px;
+    background:var(--red); color:#fff;
+    font-family:var(--font-mono); font-size:0.62rem; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--bg);
+  }
 
   /* ---------- hero ---------- */
   .hero{
     padding:120px 24px 0;
     text-align:center;
     max-width:1080px; margin:0 auto;
+    position:relative; overflow-x:clip;
   }
   .hero-logo{
     width:170px; height:auto; margin:0 auto 22px;
     filter:drop-shadow(0 10px 30px rgba(230,172,44,0.3));
-    animation:floatLogo 6s ease-in-out infinite;
   }
   @keyframes floatLogo{
     0%,100%{transform:translateY(0);}
     50%{transform:translateY(-10px);}
   }
-  .hero{position:relative; overflow-x:clip;}
   .hero::before{
     content:''; position:absolute; left:50%; top:80px; transform:translateX(-50%);
     width:min(420px, 88vw); height:min(420px, 88vw); z-index:-1;
@@ -178,14 +191,16 @@
   .hero-actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:48px;}
   .btn{
     font-family:var(--font-mono); font-weight:600; font-size:0.85rem;
-    padding:12px 24px; border-radius:999px;
-    display:inline-flex; align-items:center; gap:8px;
-    transition:transform .2s;
+    padding:12px 24px; border-radius:999px; border:none;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform .2s, box-shadow .2s;
   }
   .btn:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(230,172,44,0.25);}
   .btn-primary{background:var(--gold); color:var(--bg);}
-  .btn-ghost{border:1px solid var(--line-strong); color:var(--cream);}
+  .btn-ghost{border:1px solid var(--line-strong); color:var(--cream); background:none;}
+  .btn:disabled{opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none;}
   .btn svg{width:15px; height:15px;}
+  .btn-block{width:100%;}
 
   .social-row{display:flex; gap:16px; justify-content:center; padding-bottom:40px;}
   .social-row a{
@@ -230,7 +245,7 @@
     display:flex; align-items:baseline; justify-content:space-between; gap:16px;
     flex-wrap:wrap;
     border-bottom:1px dashed var(--line-strong);
-    padding-bottom:12px; margin-bottom:14px;
+    padding-bottom:12px; margin-bottom:6px;
   }
   .group-name{
     font-family:var(--font-display); font-weight:600; font-size:1.15rem; color:var(--cream);
@@ -244,31 +259,50 @@
     font-family:var(--font-mono); font-size:0.75rem; font-weight:600;
     background:var(--surface-2); color:var(--gold-bright);
     padding:4px 10px; border-radius:6px; border:1px solid var(--line);
-    transition:border-color .2s, transform .2s;
   }
-  .size-pill:hover{border-color:var(--gold); transform:translateY(-1px);}
 
-  .item-list{display:grid; gap:2px;}
-  .item-row{
-    display:flex; align-items:baseline; gap:8px;
-    padding:8px 6px; border-radius:8px;
-    transition:background .2s, padding-left .2s;
+  /* ---------- menu items (data-driven, cart-enabled) ---------- */
+  .item-list{display:grid; gap:4px;}
+  .menu-item{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:12px 8px; border-radius:10px;
+    transition:background .2s;
+    flex-wrap:wrap;
   }
-  .item-row:hover{background:var(--surface-2); padding-left:10px;}
-  .item-row:hover .item-name{color:var(--gold-bright);}
-  .item-row .item-name{font-size:0.98rem; color:var(--cream); transition:color .2s;}
-  .item-row .dots{
-    flex:1; border-bottom:1px dotted var(--line-strong); transform:translateY(-4px);
+  .menu-item:hover{background:var(--surface-2);}
+  .mi-main{display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;}
+  .mi-name{font-size:0.98rem; color:var(--cream); font-weight:500;}
+  .mi-variants{display:flex; gap:5px; flex-wrap:wrap;}
+  .variant-chip{
+    font-family:var(--font-mono); font-size:0.68rem; font-weight:700;
+    background:var(--bg-elevated); color:var(--muted);
+    border:1px solid var(--line); border-radius:6px;
+    padding:4px 8px; transition:all .15s;
   }
-  .item-row .item-price{
-    font-family:var(--font-mono); font-size:0.9rem; font-weight:600; color:var(--gold-bright);
-    white-space:nowrap;
+  .variant-chip:hover{border-color:var(--line-strong); color:var(--cream);}
+  .variant-chip.active{background:var(--gold); color:var(--bg); border-color:var(--gold);}
+  .mi-side{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .mi-price{
+    font-family:var(--font-mono); font-size:0.92rem; font-weight:600; color:var(--gold-bright);
+    white-space:nowrap; min-width:64px; text-align:right;
   }
-  .item-row .item-price.multi{font-size:0.78rem; color:var(--muted); font-weight:500;}
-  .item-row .item-price.multi b{color:var(--gold-bright); font-weight:600;}
+  .mi-add{
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    background:var(--gold); color:var(--bg); border:none;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s, background .15s;
+  }
+  .mi-add:hover{transform:scale(1.1) rotate(90deg); background:var(--gold-bright);}
+  .mi-add svg{width:16px; height:16px;}
+  .mi-add.just-added{animation:addPop .35s ease;}
+  @keyframes addPop{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.3); background:var(--green);}
+    100%{transform:scale(1);}
+  }
 
   .plain-grid{display:grid; grid-template-columns:1fr 1fr; gap:2px 24px;}
-  @media(max-width:520px){.plain-grid{grid-template-columns:1fr;}}
+  @media(max-width:560px){.plain-grid{grid-template-columns:1fr;}}
 
   /* ---------- deals ---------- */
   .deals-grid{
@@ -283,6 +317,7 @@
     position:relative; overflow:hidden;
     opacity:0; transform:translateY(28px) scale(0.98);
     transition:transform .3s, box-shadow .3s, border-color .3s;
+    display:flex; flex-direction:column;
   }
   .deal-card.revealed{opacity:1; transform:translateY(0) scale(1); transition:opacity .6s ease, transform .6s ease;}
   .deal-card:hover{transform:translateY(-6px) scale(1.02); border-color:var(--gold); box-shadow:0 18px 44px rgba(0,0,0,0.45);}
@@ -296,8 +331,24 @@
     font-family:var(--font-mono); font-weight:700; font-size:1.4rem; color:var(--gold-bright);
     margin:6px 0 12px;
   }
-  .deal-price small{font-size:0.75rem; color:var(--muted); font-weight:500;}
-  .deal-items{font-size:0.88rem; color:var(--muted); line-height:1.6;}
+  .deal-items{font-size:0.88rem; color:var(--muted); line-height:1.6; margin-bottom:16px; flex:1;}
+  .deal-add{
+    align-self:flex-start;
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-weight:600; font-size:0.78rem;
+    background:var(--gold); color:var(--bg); border:none;
+    padding:9px 16px; border-radius:999px;
+    transition:transform .15s, background .15s;
+    position:relative; z-index:1;
+  }
+  .deal-add:hover{transform:translateY(-2px); background:var(--gold-bright);}
+  .deal-add svg{width:14px; height:14px;}
+  .deal-add.just-added{animation:addPopBtn .4s ease;}
+  @keyframes addPopBtn{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.05); background:var(--green); color:#fff;}
+    100%{transform:scale(1);}
+  }
 
   /* ---------- footer ---------- */
   footer{
@@ -345,22 +396,163 @@
   .location-hours{font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); display:flex; gap:10px;}
   .location-hours svg{width:16px; height:16px; color:var(--gold); flex-shrink:0; margin-top:1px;}
 
-  /* ---------- floating call button (mobile) ---------- */
+  /* ---------- floating buttons (mobile) ---------- */
   .float-stack{
     position:fixed; bottom:20px; right:20px; z-index:60;
-    display:flex; flex-direction:column; gap:12px;
+    display:flex; flex-direction:column; gap:12px; align-items:flex-end;
   }
   .float-btn{
-    width:56px; height:56px; border-radius:50%;
+    width:56px; height:56px; border-radius:50%; border:none;
     display:flex; align-items:center; justify-content:center;
-    color:#fff;
+    color:#fff; position:relative;
   }
   .float-btn svg{width:22px; height:22px;}
   .float-call{background:var(--red); box-shadow:0 10px 24px rgba(214,40,40,0.45);}
-  .float-whatsapp{background:#25D366; box-shadow:0 10px 24px rgba(37,211,102,0.45);}
+  .float-whatsapp{background:var(--green); box-shadow:0 10px 24px rgba(37,211,102,0.45);}
+  .float-cart{background:var(--gold); color:var(--bg); box-shadow:0 10px 24px rgba(230,172,44,0.45);}
+  .float-cart .cart-count{border-color:var(--bg);}
 
-  @media(min-width:769px){.float-stack{display:none;}}
+  @media(min-width:769px){.float-stack .float-call, .float-stack .float-whatsapp{display:none;}}
   @media(max-width:768px){.float-nav{padding:6px 6px;}}
+
+  /* ---------- cart drawer ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:90;
+    background:rgba(6,4,2,0.6); backdrop-filter:blur(3px);
+    opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .overlay.open{opacity:1; pointer-events:auto;}
+
+  .cart-drawer{
+    position:fixed; top:0; right:0; height:100%; width:min(400px, 92vw);
+    background:var(--bg-elevated); z-index:91;
+    border-left:1px solid var(--line-strong);
+    display:flex; flex-direction:column;
+    transform:translateX(100%); transition:transform .32s cubic-bezier(.2,.8,.2,1);
+    box-shadow:-20px 0 50px rgba(0,0,0,0.5);
+  }
+  .cart-drawer.open{transform:translateX(0);}
+  .cart-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 22px; border-bottom:1px solid var(--line);
+  }
+  .cart-header h3{font-family:var(--font-display); font-size:1.2rem; color:var(--gold-bright);}
+  .icon-close{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line-strong);
+    background:none; color:var(--cream); display:flex; align-items:center; justify-content:center;
+    transition:border-color .2s, color .2s;
+  }
+  .icon-close:hover{border-color:var(--gold); color:var(--gold-bright);}
+  .icon-close svg{width:16px; height:16px;}
+
+  .cart-items{flex:1; overflow-y:auto; padding:8px 14px;}
+  .cart-empty{
+    text-align:center; color:var(--muted); font-size:0.9rem;
+    padding:60px 20px; display:flex; flex-direction:column; align-items:center; gap:12px;
+  }
+  .cart-empty svg{width:40px; height:40px; color:var(--line-strong);}
+
+  .cart-item{
+    display:grid; grid-template-columns:1fr auto; gap:4px 10px;
+    padding:14px 8px; border-bottom:1px solid var(--line);
+  }
+  .ci-name{font-size:0.92rem; color:var(--cream); font-weight:500;}
+  .ci-variant{color:var(--muted); font-weight:400; font-size:0.82rem;}
+  .ci-unit{font-family:var(--font-mono); font-size:0.75rem; color:var(--muted);}
+  .ci-total{
+    font-family:var(--font-mono); font-weight:600; color:var(--gold-bright);
+    text-align:right; align-self:center;
+  }
+  .ci-controls{
+    grid-column:1 / -1;
+    display:flex; align-items:center; justify-content:space-between; margin-top:4px;
+  }
+  .qty-group{display:flex; align-items:center; gap:10px; background:var(--surface); border-radius:999px; padding:4px;}
+  .qty-btn{
+    width:26px; height:26px; border-radius:50%; border:none;
+    background:var(--surface-2); color:var(--cream);
+    display:flex; align-items:center; justify-content:center; font-size:1rem; line-height:1;
+    transition:background .15s;
+  }
+  .qty-btn:hover{background:var(--gold); color:var(--bg);}
+  .qty-val{font-family:var(--font-mono); font-size:0.85rem; min-width:16px; text-align:center;}
+  .ci-remove{
+    background:none; border:none; color:var(--muted);
+    font-size:0.78rem; font-family:var(--font-mono);
+    display:flex; align-items:center; gap:5px;
+    transition:color .15s;
+  }
+  .ci-remove:hover{color:var(--red-bright);}
+  .ci-remove svg{width:13px; height:13px;}
+
+  .cart-footer{
+    border-top:1px solid var(--line); padding:18px 22px 22px;
+    background:var(--surface);
+  }
+  .cart-subtotal-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:14px;
+  }
+  .cart-subtotal-row span:first-child{font-size:0.85rem; color:var(--muted); font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.06em;}
+  .cart-subtotal-row span:last-child{font-family:var(--font-mono); font-size:1.3rem; font-weight:700; color:var(--gold-bright);}
+
+  /* ---------- checkout modal ---------- */
+  .modal{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.96);
+    width:min(440px, 92vw); max-height:88vh; overflow-y:auto;
+    background:var(--bg-elevated); border:1px solid var(--line-strong);
+    border-radius:18px; z-index:101;
+    padding:26px 24px 24px;
+    opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+    box-shadow:0 30px 80px rgba(0,0,0,0.6);
+  }
+  .modal.open{opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1);}
+  .modal-overlay{z-index:100;}
+  .modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .modal-head h3{font-family:var(--font-display); font-size:1.25rem; color:var(--gold-bright);}
+
+  .order-type-toggle{display:flex; gap:8px; margin-bottom:18px;}
+  .toggle-btn{
+    flex:1; padding:10px; border-radius:10px; border:1px solid var(--line-strong);
+    background:var(--surface); color:var(--muted);
+    font-family:var(--font-mono); font-size:0.8rem; font-weight:600;
+    transition:all .2s;
+  }
+  .toggle-btn.active{background:var(--gold); color:var(--bg); border-color:var(--gold);}
+
+  .field{margin-bottom:14px; display:flex; flex-direction:column; gap:6px;}
+  .field label{font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);}
+  .field input, .field textarea{
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:10px;
+    padding:11px 13px; color:var(--cream); font-size:0.92rem;
+    transition:border-color .2s;
+  }
+  .field input:focus, .field textarea:focus{border-color:var(--gold); outline:none;}
+  .field textarea{resize:vertical; min-height:64px;}
+
+  .checkout-summary{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px; margin-bottom:16px; font-size:0.82rem; color:var(--muted);
+    display:flex; justify-content:space-between;
+  }
+  .checkout-summary b{color:var(--gold-bright); font-family:var(--font-mono);}
+  .checkout-error{
+    color:var(--red-bright); font-size:0.78rem; margin-bottom:10px; display:none;
+  }
+  .checkout-error.show{display:block;}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--surface); border:1px solid var(--gold);
+    color:var(--cream); padding:12px 20px; border-radius:999px;
+    font-family:var(--font-mono); font-size:0.82rem;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    z-index:120; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast svg{width:16px; height:16px; color:var(--green); flex-shrink:0;}
 
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto;}
@@ -370,6 +562,7 @@
     .group, .deal-card, .section-head, .location-wrap > *{
       opacity:1; transform:none; transition:none;
     }
+    .cart-drawer, .modal, .overlay, .toast{transition:none;}
   }
 </style>
 </head>
@@ -388,12 +581,13 @@
       <a class="nav-link" href="#location">Location</a>
     </div>
     <div class="nav-quick-actions">
-      <a class="quick-icon wa" href="https://wa.me/923399880002" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <a class="quick-icon wa" href="https://wa.me/923399880003" target="_blank" rel="noopener" aria-label="WhatsApp">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.65-4.95A9 9 0 1112 21a8.96 8.96 0 01-4.5-1.2z"/><path d="M8.5 8.5c0 4 3 7 7 7 .7 0 1.4-.6 1.4-1.3l-.1-1-2-.5-1 1.3a5.6 5.6 0 01-3.8-3.8l1.3-1-.5-2-1-.1c-.7 0-1.3.6-1.3 1.4z"/></svg>
       </a>
-      <a class="quick-icon call" href="tel:03399880002" aria-label="Call">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      </a>
+      <button class="quick-icon cart-icon" id="cartToggleDesktop" aria-label="View cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        <span class="cart-count" id="cartCountDesktop" style="display:none;">0</span>
+      </button>
     </div>
   </div>
 </nav>
@@ -401,19 +595,19 @@
 <!-- ================= HERO ================= -->
 <section class="hero">
   <img class="hero-logo" src="assets/logo.png" alt="Bursa">
-  <div class="hero-eyebrow"><span class="rule"></span> Fire-Baked · Fast Food · Est. Menu <span class="rule"></span></div>
-  <h1 class="hero-title">The Full <span>Bursa</span> Menu</h1>
-  <p class="hero-sub">Stone-fired pizzas, loaded burgers, crispy wings and a full bar of shakes, coffee &amp; mocktails — everything on the menu, in one place.</p>
+  <div class="hero-eyebrow"><span class="rule"></span> Fire-Baked · Fast Food · Order on WhatsApp <span class="rule"></span></div>
+  <h1 class="hero-title">Build Your <span>Bursa</span> Order</h1>
+  <p class="hero-sub">Browse the full menu, add what you're craving to your cart, and send your order straight to us on WhatsApp — no account, no app.</p>
   <div class="hero-actions">
     <a class="btn btn-primary" href="#pizzas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7z"/></svg>
-      View Menu
+      Start Ordering
     </a>
     <a class="btn btn-ghost" href="tel:03399880002">Call: 0339 9880002</a>
     <a class="btn btn-ghost" href="tel:03399880003">0339 9880003</a>
   </div>
   <div class="social-row">
-    <a href="https://wa.me/923399880002" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <a href="https://wa.me/923399880003" target="_blank" rel="noopener" aria-label="WhatsApp">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.65-4.95A9 9 0 1112 21a8.96 8.96 0 01-4.5-1.2z"/><path d="M8.5 8.5c0 4 3 7 7 7 .7 0 1.4-.6 1.4-1.3l-.1-1-2-.5-1 1.3a5.6 5.6 0 01-3.8-3.8l1.3-1-.5-2-1-.1c-.7 0-1.3.6-1.3 1.4z"/></svg>
     </a>
     <a href="https://www.instagram.com/bursatld" target="_blank" rel="noopener" aria-label="Instagram">
@@ -439,100 +633,7 @@
     <div class="section-kicker">01 — Stone Fired</div>
     <h2 class="section-title">Pizzas</h2>
   </div>
-  <div class="container">
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Traditional Flavours</div>
-        <div class="size-tiers">
-          <span class="size-pill">S 590</span><span class="size-pill">M 1090</span><span class="size-pill">L 1390</span><span class="size-pill">XL 1790</span>
-        </div>
-      </div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Chicken Tikka</span></div>
-        <div class="item-row"><span class="item-name">Chicken Fajita</span></div>
-        <div class="item-row"><span class="item-name">Fajita Sicilian</span></div>
-        <div class="item-row"><span class="item-name">Hot N Spicy</span></div>
-        <div class="item-row"><span class="item-name">Chicken Supreme</span></div>
-        <div class="item-row"><span class="item-name">Cheese Lover</span></div>
-        <div class="item-row"><span class="item-name">Veggie Lover</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Stuff Crust Special — Round</div>
-        <div class="size-tiers"><span class="size-pill">M 1390</span><span class="size-pill">L 1790</span><span class="size-pill">XL 2190</span></div>
-      </div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Chicken &amp; Cheese Stuffer</span></div>
-        <div class="item-row"><span class="item-name">Kebab Stuffer</span></div>
-        <div class="item-row"><span class="item-name">Cheese Stuffer</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Stuff Crust Special — Square</div>
-        <div class="size-tiers"><span class="size-pill">M 1450</span><span class="size-pill">L 1850</span></div>
-      </div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Chicken &amp; Cheese Stuffer</span></div>
-        <div class="item-row"><span class="item-name">Kebab Stuffer</span></div>
-        <div class="item-row"><span class="item-name">Cheese Stuffer</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Somewhat Special</div>
-        <div class="size-tiers">
-          <span class="size-pill">S 690</span><span class="size-pill">M 1190</span><span class="size-pill">L 1490</span><span class="size-pill">XL 1890</span>
-        </div>
-      </div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Bursa Special</span></div>
-        <div class="item-row"><span class="item-name">Supreme Lebistro</span></div>
-        <div class="item-row"><span class="item-name">Super Supreme</span></div>
-        <div class="item-row"><span class="item-name">Bone Fire</span></div>
-        <div class="item-row"><span class="item-name">Behari Kebab</span></div>
-        <div class="item-row"><span class="item-name">Pizza Delight</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Crown Crust <span class="group-note">Majestic Taste</span></div>
-        <div class="size-tiers"><span class="size-pill">L 1790</span><span class="size-pill">XL 2190</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Square Special <span class="group-note">Signature</span></div>
-        <div class="size-tiers"><span class="size-pill">S 690</span><span class="size-pill">M 1290</span><span class="size-pill">L 1690</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Double Decker</div>
-        <div class="size-tiers"><span class="size-pill">M 1690</span><span class="size-pill">L 1990</span><span class="size-pill">XL 2390</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Calzone Special</div>
-        <div class="size-tiers"><span class="size-pill">Rs 1090</span></div>
-      </div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Magnetic Flavour</span></div>
-        <div class="item-row"><span class="item-name">Sizzling Flavour</span></div>
-      </div>
-    </div>
-
-  </div>
+  <div class="container" id="c-pizzas"></div>
 </section>
 
 <!-- ================= WINGS & BURGERS ================= -->
@@ -541,28 +642,7 @@
     <div class="section-kicker">02 — Hand Held</div>
     <h2 class="section-title">Wings &amp; Burgers</h2>
   </div>
-  <div class="container">
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Wings</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Crispy Hot Wings</span><span class="dots"></span><span class="item-price multi"><b>6pc</b> 400 &nbsp;/&nbsp; <b>12pc</b> 750</span></div>
-        <div class="item-row"><span class="item-name">Oven Baked Wings</span><span class="dots"></span><span class="item-price multi"><b>6pc</b> 350 &nbsp;/&nbsp; <b>12pc</b> 700</span></div>
-        <div class="item-row"><span class="item-name">Peri Peri Wings</span><span class="dots"></span><span class="item-price multi"><b>6pc</b> 400 &nbsp;/&nbsp; <b>12pc</b> 750</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Burgers</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Zinger Burger</span><span class="dots"></span><span class="item-price">350</span></div>
-        <div class="item-row"><span class="item-name">Crispy Patty Burger</span><span class="dots"></span><span class="item-price">300</span></div>
-        <div class="item-row"><span class="item-name">Fire Baked Chicken Burger</span><span class="dots"></span><span class="item-price">450</span></div>
-        <div class="item-row"><span class="item-name">Big Stacker Burger</span><span class="dots"></span><span class="item-price">550</span></div>
-      </div>
-    </div>
-
-  </div>
+  <div class="container" id="c-wings-burgers"></div>
 </section>
 
 <!-- ================= PASTA & ROLLS ================= -->
@@ -571,27 +651,7 @@
     <div class="section-kicker">03 — Slow &amp; Rolled</div>
     <h2 class="section-title">Pasta &amp; Rolls</h2>
   </div>
-  <div class="container">
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Pasta</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Flaming Pasta</span><span class="dots"></span><span class="item-price multi"><b>Half</b> 400 &nbsp;/&nbsp; <b>Full</b> 800</span></div>
-        <div class="item-row"><span class="item-name">Crunchy Pasta</span><span class="dots"></span><span class="item-price multi"><b>Half</b> 450 &nbsp;/&nbsp; <b>Full</b> 850</span></div>
-        <div class="item-row"><span class="item-name">Bursa Special Pasta</span><span class="dots"></span><span class="item-price multi"><b>Half</b> 490 &nbsp;/&nbsp; <b>Full</b> 890</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Rolls <span class="group-note">4 pcs</span></div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Spin Rolls</span><span class="dots"></span><span class="item-price">600</span></div>
-        <div class="item-row"><span class="item-name">Peri Peri Rolls</span><span class="dots"></span><span class="item-price">650</span></div>
-        <div class="item-row"><span class="item-name">Kebab Sticks</span><span class="dots"></span><span class="item-price">550</span></div>
-      </div>
-    </div>
-
-  </div>
+  <div class="container" id="c-pasta-rolls"></div>
 </section>
 
 <!-- ================= SANDWICHES & SIDES ================= -->
@@ -600,52 +660,7 @@
     <div class="section-kicker">04 — Sandwiches, Nuggets, Platters &amp; Fries</div>
     <h2 class="section-title">Sandwiches &amp; Sides</h2>
   </div>
-  <div class="container">
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Sandwiches</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Mexican</span><span class="dots"></span><span class="item-price">750</span></div>
-        <div class="item-row"><span class="item-name">King Stacker</span><span class="dots"></span><span class="item-price">850</span></div>
-        <div class="item-row"><span class="item-name">Grilled</span><span class="dots"></span><span class="item-price">750</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Nuggets</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">6 Pcs</span><span class="dots"></span><span class="item-price">300</span></div>
-        <div class="item-row"><span class="item-name">12 Pcs</span><span class="dots"></span><span class="item-price">600</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Platters</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Classic</span><span class="dots"></span><span class="item-price">1050</span></div>
-        <div class="item-row"><span class="item-name">Bursa Malai Platter</span><span class="dots"></span><span class="item-price">1150</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Fries</div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">French Fries</span><span class="dots"></span><span class="item-price multi"><b>Half</b> 200 &nbsp;/&nbsp; <b>Full</b> 300</span></div>
-        <div class="item-row"><span class="item-name">Loaded Fries</span><span class="dots"></span><span class="item-price multi"><b>Half</b> 350 &nbsp;/&nbsp; <b>Full</b> 650</span></div>
-        <div class="item-row"><span class="item-name">Crunchy Loaded Fries</span><span class="dots"></span><span class="item-price multi"><b>Half</b> 450 &nbsp;/&nbsp; <b>Full</b> 800</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Modifiers <span class="group-note">add-ons</span></div></div>
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">Cheese Slice <span class="group-note">(for burgers)</span></span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Extra Topping — Chicken</span><span class="dots"></span><span class="item-price multi"><b>S</b> 100 / <b>M</b> 150 / <b>L</b> 200</span></div>
-        <div class="item-row"><span class="item-name">Extra Topping — Cheese</span><span class="dots"></span><span class="item-price multi"><b>S</b> 100 / <b>M</b> 150 / <b>L</b> 200</span></div>
-      </div>
-    </div>
-
-  </div>
+  <div class="container" id="c-sides"></div>
 </section>
 
 <!-- ================= BEVERAGES ================= -->
@@ -654,17 +669,7 @@
     <div class="section-kicker">05 — Bottled</div>
     <h2 class="section-title">Beverages</h2>
   </div>
-  <div class="container">
-    <div class="group">
-      <div class="item-list">
-        <div class="item-row"><span class="item-name">345 ml</span><span class="dots"></span><span class="item-price">80</span></div>
-        <div class="item-row"><span class="item-name">500 ml</span><span class="dots"></span><span class="item-price">120</span></div>
-        <div class="item-row"><span class="item-name">1 Liter</span><span class="dots"></span><span class="item-price">170</span></div>
-        <div class="item-row"><span class="item-name">1.5 Liter</span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">2 Liter</span><span class="dots"></span><span class="item-price">240</span></div>
-      </div>
-    </div>
-  </div>
+  <div class="container" id="c-beverages"></div>
 </section>
 
 <svg class="battlement battlement--thin" width="100%" height="10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -678,102 +683,7 @@
     <div class="section-kicker">06 — Shakes, Coffee &amp; Mocktails</div>
     <h2 class="section-title">Bursa Bar</h2>
   </div>
-  <div class="container">
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Milk Shake</div></div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Banana Dates Shake</span><span class="dots"></span><span class="item-price">250</span></div>
-        <div class="item-row"><span class="item-name">Banana Peanut Butter</span><span class="dots"></span><span class="item-price">390</span></div>
-        <div class="item-row"><span class="item-name">Banana Apple Shake</span><span class="dots"></span><span class="item-price">250</span></div>
-        <div class="item-row"><span class="item-name">Mango Shake</span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">Plum Shake</span><span class="dots"></span><span class="item-price">300</span></div>
-        <div class="item-row"><span class="item-name">Papita Shake</span><span class="dots"></span><span class="item-price">300</span></div>
-        <div class="item-row"><span class="item-name">Strawberry Shake</span><span class="dots"></span><span class="item-price">300</span></div>
-        <div class="item-row"><span class="item-name">Papa Shake</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Coconut Shake</span><span class="dots"></span><span class="item-price">350</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Ice Cream Shake</div></div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Oreo Cookie Shake</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Kit Kat Shake</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Chocolate Peanut Butter</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Pina Colada</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Strawberry Colada</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Berry Splendor Shake</span><span class="dots"></span><span class="item-price">490</span></div>
-        <div class="item-row"><span class="item-name">Mango Shake</span><span class="dots"></span><span class="item-price">390</span></div>
-        <div class="item-row"><span class="item-name">Strawberry Shake</span><span class="dots"></span><span class="item-price">390</span></div>
-        <div class="item-row"><span class="item-name">Kulfa Shake</span><span class="dots"></span><span class="item-price">390</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Cold Coffee</div></div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Iced Latte <span class="group-note">over ice</span></span><span class="dots"></span><span class="item-price">350</span></div>
-        <div class="item-row"><span class="item-name">Iced Mocha <span class="group-note">over ice</span></span><span class="dots"></span><span class="item-price">450</span></div>
-        <div class="item-row"><span class="item-name">Spanish Latte <span class="group-note">over ice</span></span><span class="dots"></span><span class="item-price">450</span></div>
-        <div class="item-row"><span class="item-name">Classic Cold Coffee</span><span class="dots"></span><span class="item-price">350</span></div>
-        <div class="item-row"><span class="item-name">Caramel Cold Coffee</span><span class="dots"></span><span class="item-price">450</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Iced Tea</div></div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Peach &amp; Passion Fruit</span><span class="dots"></span><span class="item-price">150</span></div>
-        <div class="item-row"><span class="item-name">Mango Lychee</span><span class="dots"></span><span class="item-price">150</span></div>
-        <div class="item-row"><span class="item-name">Lemon Mint</span><span class="dots"></span><span class="item-price">150</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Mocktails &amp; Margaritas</div></div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Mama Gava Margarita</span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">Beet Root Margarita</span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">Strawberry Margarita</span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">Mint Margarita</span><span class="dots"></span><span class="item-price">150</span></div>
-        <div class="item-row"><span class="item-name">Pre Workout Vibe <span class="group-note">orange</span></span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">Cocktail Vibe <span class="group-note">blueberry</span></span><span class="dots"></span><span class="item-price">200</span></div>
-        <div class="item-row"><span class="item-name">Lemonade Drink</span><span class="dots"></span><span class="item-price">150</span></div>
-        <div class="item-row"><span class="item-name">Fresh Lime</span><span class="dots"></span><span class="item-price">140</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head">
-        <div class="group-name"><span class="star">★</span>Ice Cream <span class="group-note">per scoop</span></div>
-        <div class="size-tiers"><span class="size-pill">Walls</span><span class="size-pill">Hico</span></div>
-      </div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Strawberry</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-        <div class="item-row"><span class="item-name">Caramel</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-        <div class="item-row"><span class="item-name">Vanilla</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-        <div class="item-row"><span class="item-name">Mango</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-        <div class="item-row"><span class="item-name">Chocolate</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-        <div class="item-row"><span class="item-name">Pista</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-        <div class="item-row"><span class="item-name">Kulfa</span><span class="dots"></span><span class="item-price multi">80 / 100</span></div>
-      </div>
-    </div>
-
-    <div class="group">
-      <div class="group-head"><div class="group-name"><span class="star">★</span>Hot Beverages</div></div>
-      <div class="item-list plain-grid">
-        <div class="item-row"><span class="item-name">Cardamom Tea</span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Cinnamon Tea</span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Kadak Chai</span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Masala Chai</span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Green Tea</span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Peshawari Qahwa</span><span class="dots"></span><span class="item-price">100</span></div>
-        <div class="item-row"><span class="item-name">Black Tea</span><span class="dots"></span><span class="item-price">100</span></div>
-      </div>
-    </div>
-
-  </div>
+  <div class="container" id="c-bursa-bar"></div>
 </section>
 
 <!-- ================= DEALS ================= -->
@@ -782,63 +692,7 @@
     <div class="section-kicker">07 — Best Value</div>
     <h2 class="section-title">Deals</h2>
   </div>
-  <div class="deals-grid">
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 1</div>
-      <div class="deal-price">Rs 550</div>
-      <div class="deal-items">1 Zinger Burger + 1 Regular Fries + 1 345ml Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 2</div>
-      <div class="deal-price">Rs 850</div>
-      <div class="deal-items">1 Zinger Burger + 1 Patty Burger + 1 Regular Fries + 1 500ml Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 3</div>
-      <div class="deal-price">Rs 1,050</div>
-      <div class="deal-items">1 Small Pizza + 6 Nuggets + 1 Regular Fries + 1 500ml Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 4</div>
-      <div class="deal-price">Rs 1,850</div>
-      <div class="deal-items">1 Medium Special Pizza + 1 Half Creamy Pasta + 1 Regular Fries + 1 1L Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 5</div>
-      <div class="deal-price">Rs 2,450</div>
-      <div class="deal-items">1 Special Large Pizza + 12 Fried Wings + 1 Regular Fries + 1 1.5L Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 6</div>
-      <div class="deal-price">Rs 2,750</div>
-      <div class="deal-items">1 Special Large Pizza + 1 Regular Large Pizza + 1 1.5L Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Deal 7</div>
-      <div class="deal-price">Rs 2,850</div>
-      <div class="deal-items">1 Large Pizza Special + 4 Zinger Burger + 1 2L Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Family Deal</div>
-      <div class="deal-price">Rs 3,800</div>
-      <div class="deal-items">1 Special Large Pizza + 1 Regular Large Pizza + 12 Fried Wings + 1 Large Fries + 1.5L Drink</div>
-    </div>
-
-    <div class="deal-card">
-      <div class="deal-name">Birthday Deal</div>
-      <div class="deal-price">Rs 4,900</div>
-      <div class="deal-items">1 Special XL Pizza + 1 Regular XL Pizza + 12 Nuggets + 12 Hot Wings + 1.5L Drink</div>
-    </div>
-
-  </div>
+  <div class="deals-grid" id="c-deals"></div>
 </section>
 
 <!-- ================= LOCATION ================= -->
@@ -889,7 +743,11 @@
 </footer>
 
 <div class="float-stack">
-  <a class="float-btn float-whatsapp" href="https://wa.me/923399880002" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <button class="float-btn float-cart" id="cartToggleMobile" aria-label="View cart">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+    <span class="cart-count" id="cartCountMobile" style="display:none;">0</span>
+  </button>
+  <a class="float-btn float-whatsapp" href="https://wa.me/923399880003" target="_blank" rel="noopener" aria-label="WhatsApp">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.65-4.95A9 9 0 1112 21a8.96 8.96 0 01-4.5-1.2z"/><path d="M8.5 8.5c0 4 3 7 7 7 .7 0 1.4-.6 1.4-1.3l-.1-1-2-.5-1 1.3a5.6 5.6 0 01-3.8-3.8l1.3-1-.5-2-1-.1c-.7 0-1.3.6-1.3 1.4z"/></svg>
   </a>
   <a class="float-btn float-call" href="tel:03399880002" aria-label="Call to order">
@@ -897,49 +755,612 @@
   </a>
 </div>
 
+<!-- ================= CART DRAWER ================= -->
+<div class="overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+  <div class="cart-header">
+    <h3>Your Order</h3>
+    <button class="icon-close" id="cartClose" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal-row">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">Rs 0</span>
+    </div>
+    <button class="btn btn-primary btn-block" id="openCheckout" disabled>
+      Checkout
+    </button>
+  </div>
+</aside>
+
+<!-- ================= CHECKOUT MODAL ================= -->
+<div class="overlay modal-overlay" id="checkoutOverlay"></div>
+<div class="modal" id="checkoutModal" role="dialog" aria-label="Checkout">
+  <div class="modal-head">
+    <h3>Your Details</h3>
+    <button class="icon-close" id="checkoutClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="order-type-toggle">
+    <button class="toggle-btn active" data-type="Delivery" id="typeDelivery">Delivery</button>
+    <button class="toggle-btn" data-type="Pickup" id="typePickup">Pickup</button>
+  </div>
+
+  <div class="field">
+    <label for="custName">Full Name</label>
+    <input type="text" id="custName" placeholder="Your name" autocomplete="name">
+  </div>
+  <div class="field">
+    <label for="custPhone">Phone Number</label>
+    <input type="tel" id="custPhone" placeholder="03xx xxxxxxx" autocomplete="tel">
+  </div>
+  <div class="field" id="addressField">
+    <label for="custAddress">Delivery Address</label>
+    <textarea id="custAddress" placeholder="House #, street, area, landmark"></textarea>
+  </div>
+
+  <div class="checkout-summary">
+    <span id="checkoutItemCount">0 items</span>
+    <b id="checkoutSubtotal">Rs 0</b>
+  </div>
+
+  <div class="checkout-error" id="checkoutError">Please fill in your name and phone number.</div>
+
+  <button class="btn btn-primary btn-block" id="placeOrderBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.65-4.95A9 9 0 1112 21a8.96 8.96 0 01-4.5-1.2z"/><path d="M8.5 8.5c0 4 3 7 7 7 .7 0 1.4-.6 1.4-1.3l-.1-1-2-.5-1 1.3a5.6 5.6 0 01-3.8-3.8l1.3-1-.5-2-1-.1c-.7 0-1.3.6-1.3 1.4z"/></svg>
+    Place Order via WhatsApp
+  </button>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastText">Added to cart</span>
+</div>
+
 <script>
-  document.getElementById('year').textContent = new Date().getFullYear();
+/* =========================================================
+   MENU DATA
+   ========================================================= */
+const MENU_DATA = {
+  "c-pizzas": [
+    { name:"Traditional Flavours", variants:["S","M","L","XL"],
+      items:[
+        {name:"Chicken Tikka", prices:[590,1090,1390,1790]},
+        {name:"Chicken Fajita", prices:[590,1090,1390,1790]},
+        {name:"Fajita Sicilian", prices:[590,1090,1390,1790]},
+        {name:"Hot N Spicy", prices:[590,1090,1390,1790]},
+        {name:"Chicken Supreme", prices:[590,1090,1390,1790]},
+        {name:"Cheese Lover", prices:[590,1090,1390,1790]},
+        {name:"Veggie Lover", prices:[590,1090,1390,1790]}
+      ]},
+    { name:"Stuff Crust Special — Round", variants:["M","L","XL"],
+      items:[
+        {name:"Chicken & Cheese Stuffer", prices:[1390,1790,2190]},
+        {name:"Kebab Stuffer", prices:[1390,1790,2190]},
+        {name:"Cheese Stuffer", prices:[1390,1790,2190]}
+      ]},
+    { name:"Stuff Crust Special — Square", variants:["M","L"],
+      items:[
+        {name:"Chicken & Cheese Stuffer", prices:[1450,1850]},
+        {name:"Kebab Stuffer", prices:[1450,1850]},
+        {name:"Cheese Stuffer", prices:[1450,1850]}
+      ]},
+    { name:"Somewhat Special", variants:["S","M","L","XL"],
+      items:[
+        {name:"Bursa Special", prices:[690,1190,1490,1890]},
+        {name:"Supreme Lebistro", prices:[690,1190,1490,1890]},
+        {name:"Super Supreme", prices:[690,1190,1490,1890]},
+        {name:"Bone Fire", prices:[690,1190,1490,1890]},
+        {name:"Behari Kebab", prices:[690,1190,1490,1890]},
+        {name:"Pizza Delight", prices:[690,1190,1490,1890]}
+      ]},
+    { name:"Crown Crust", note:"Majestic Taste", variants:["L","XL"], singleFlavor:true,
+      items:[{name:"Crown Crust", prices:[1790,2190]}] },
+    { name:"Square Special", note:"Signature", variants:["S","M","L"], singleFlavor:true,
+      items:[{name:"Square Special", prices:[690,1290,1690]}] },
+    { name:"Double Decker", variants:["M","L","XL"], singleFlavor:true,
+      items:[{name:"Double Decker", prices:[1690,1990,2390]}] },
+    { name:"Calzone Special", plainGrid:true,
+      items:[
+        {name:"Magnetic Flavour", price:1090},
+        {name:"Sizzling Flavour", price:1090}
+      ]}
+  ],
+  "c-wings-burgers": [
+    { name:"Wings", variants:["6pc","12pc"],
+      items:[
+        {name:"Crispy Hot Wings", prices:[400,750]},
+        {name:"Oven Baked Wings", prices:[350,700]},
+        {name:"Peri Peri Wings", prices:[400,750]}
+      ]},
+    { name:"Burgers",
+      items:[
+        {name:"Zinger Burger", price:350},
+        {name:"Crispy Patty Burger", price:300},
+        {name:"Fire Baked Chicken Burger", price:450},
+        {name:"Big Stacker Burger", price:550}
+      ]}
+  ],
+  "c-pasta-rolls": [
+    { name:"Pasta", variants:["Half","Full"],
+      items:[
+        {name:"Flaming Pasta", prices:[400,800]},
+        {name:"Crunchy Pasta", prices:[450,850]},
+        {name:"Bursa Special Pasta", prices:[490,890]}
+      ]},
+    { name:"Rolls", note:"4 pcs",
+      items:[
+        {name:"Spin Rolls", price:600},
+        {name:"Peri Peri Rolls", price:650},
+        {name:"Kebab Sticks", price:550}
+      ]}
+  ],
+  "c-sides": [
+    { name:"Sandwiches",
+      items:[
+        {name:"Mexican", price:750},
+        {name:"King Stacker", price:850},
+        {name:"Grilled", price:750}
+      ]},
+    { name:"Nuggets",
+      items:[
+        {name:"6 Pcs", price:300},
+        {name:"12 Pcs", price:600}
+      ]},
+    { name:"Platters",
+      items:[
+        {name:"Classic", price:1050},
+        {name:"Bursa Malai Platter", price:1150}
+      ]},
+    { name:"Fries", variants:["Half","Full"],
+      items:[
+        {name:"French Fries", prices:[200,300]},
+        {name:"Loaded Fries", prices:[350,650]},
+        {name:"Crunchy Loaded Fries", prices:[450,800]}
+      ]},
+    { name:"Modifiers", note:"add-ons",
+      items:[
+        {name:"Cheese Slice", note:"for burgers", price:100},
+        {name:"Extra Topping — Chicken", variants:["S","M","L"], prices:[100,150,200]},
+        {name:"Extra Topping — Cheese", variants:["S","M","L"], prices:[100,150,200]}
+      ]}
+  ],
+  "c-beverages": [
+    { name:"Soft Drinks", variants:["345ml","500ml","1L","1.5L","2L"],
+      items:[{name:"Soft Drink", prices:[80,120,170,200,240]}] }
+  ],
+  "c-bursa-bar": [
+    { name:"Milk Shake", plainGrid:true,
+      items:[
+        {name:"Banana Dates Shake", price:250},
+        {name:"Banana Peanut Butter", price:390},
+        {name:"Banana Apple Shake", price:250},
+        {name:"Mango Shake", price:200},
+        {name:"Plum Shake", price:300},
+        {name:"Papita Shake", price:300},
+        {name:"Strawberry Shake", price:300},
+        {name:"Papa Shake", price:490},
+        {name:"Coconut Shake", price:350}
+      ]},
+    { name:"Ice Cream Shake", plainGrid:true,
+      items:[
+        {name:"Oreo Cookie Shake", price:490},
+        {name:"Kit Kat Shake", price:490},
+        {name:"Chocolate Peanut Butter", price:490},
+        {name:"Pina Colada", price:490},
+        {name:"Strawberry Colada", price:490},
+        {name:"Berry Splendor Shake", price:490},
+        {name:"Mango Shake", price:390},
+        {name:"Strawberry Shake", price:390},
+        {name:"Kulfa Shake", price:390}
+      ]},
+    { name:"Cold Coffee", plainGrid:true,
+      items:[
+        {name:"Iced Latte", note:"over ice", price:350},
+        {name:"Iced Mocha", note:"over ice", price:450},
+        {name:"Spanish Latte", note:"over ice", price:450},
+        {name:"Classic Cold Coffee", price:350},
+        {name:"Caramel Cold Coffee", price:450}
+      ]},
+    { name:"Iced Tea", plainGrid:true,
+      items:[
+        {name:"Peach & Passion Fruit", price:150},
+        {name:"Mango Lychee", price:150},
+        {name:"Lemon Mint", price:150}
+      ]},
+    { name:"Mocktails & Margaritas", plainGrid:true,
+      items:[
+        {name:"Mama Gava Margarita", price:200},
+        {name:"Beet Root Margarita", price:200},
+        {name:"Strawberry Margarita", price:200},
+        {name:"Mint Margarita", price:150},
+        {name:"Pre Workout Vibe", note:"orange", price:200},
+        {name:"Cocktail Vibe", note:"blueberry", price:200},
+        {name:"Lemonade Drink", price:150},
+        {name:"Fresh Lime", price:140}
+      ]},
+    { name:"Ice Cream", note:"per scoop", variants:["Walls","Hico"], plainGrid:true,
+      items:[
+        {name:"Strawberry", prices:[80,100]},
+        {name:"Caramel", prices:[80,100]},
+        {name:"Vanilla", prices:[80,100]},
+        {name:"Mango", prices:[80,100]},
+        {name:"Chocolate", prices:[80,100]},
+        {name:"Pista", prices:[80,100]},
+        {name:"Kulfa", prices:[80,100]}
+      ]},
+    { name:"Hot Beverages", plainGrid:true,
+      items:[
+        {name:"Cardamom Tea", price:100},
+        {name:"Cinnamon Tea", price:100},
+        {name:"Kadak Chai", price:100},
+        {name:"Masala Chai", price:100},
+        {name:"Green Tea", price:100},
+        {name:"Peshawari Qahwa", price:100},
+        {name:"Black Tea", price:100}
+      ]}
+  ]
+};
 
-  // Floating nav: shrink/emphasize on scroll
-  const floatNav = document.getElementById('floatNav');
-  const onScroll = () => {
-    if (window.scrollY > 40) floatNav.classList.add('scrolled');
-    else floatNav.classList.remove('scrolled');
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+const DEALS_DATA = [
+  {name:"Deal 1", price:550, desc:"1 Zinger Burger + 1 Regular Fries + 1 345ml Drink"},
+  {name:"Deal 2", price:850, desc:"1 Zinger Burger + 1 Patty Burger + 1 Regular Fries + 1 500ml Drink"},
+  {name:"Deal 3", price:1050, desc:"1 Small Pizza + 6 Nuggets + 1 Regular Fries + 1 500ml Drink"},
+  {name:"Deal 4", price:1850, desc:"1 Medium Special Pizza + 1 Half Creamy Pasta + 1 Regular Fries + 1 1L Drink"},
+  {name:"Deal 5", price:2450, desc:"1 Special Large Pizza + 12 Fried Wings + 1 Regular Fries + 1 1.5L Drink"},
+  {name:"Deal 6", price:2750, desc:"1 Special Large Pizza + 1 Regular Large Pizza + 1 1.5L Drink"},
+  {name:"Deal 7", price:2850, desc:"1 Large Pizza Special + 4 Zinger Burger + 1 2L Drink"},
+  {name:"Family Deal", price:3800, desc:"1 Special Large Pizza + 1 Regular Large Pizza + 12 Fried Wings + 1 Large Fries + 1.5L Drink"},
+  {name:"Birthday Deal", price:4900, desc:"1 Special XL Pizza + 1 Regular XL Pizza + 12 Nuggets + 12 Hot Wings + 1.5L Drink"}
+];
 
-  // Scrollspy for category nav
-  const links = Array.from(document.querySelectorAll('.nav-link'));
-  const sections = links.map(l => document.querySelector(l.getAttribute('href')));
+const WHATSAPP_NUMBER = "923399880003";
 
-  const spyObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const idx = sections.indexOf(entry.target);
-      if (idx === -1) return;
-      if (entry.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        links[idx].classList.add('active');
-        links[idx].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
-      }
+/* =========================================================
+   CART STATE
+   ========================================================= */
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('bursaCart')) || []; } catch(e){ cart = []; }
+
+function saveCart(){
+  try { localStorage.setItem('bursaCart', JSON.stringify(cart)); } catch(e){}
+  renderCart();
+  updateCartCount();
+}
+
+function cartKey(group, name, variant){ return group + '|' + name + '|' + (variant || ''); }
+
+function addToCart(groupName, name, variant, price, btnEl){
+  const key = cartKey(groupName, name, variant);
+  const existing = cart.find(c => c.key === key);
+  if(existing){ existing.qty += 1; }
+  else{ cart.push({ key, name, groupName, variant, price, qty:1 }); }
+  saveCart();
+  showToast(name + (variant ? ' (' + variant + ')' : '') + ' added to cart');
+  if(btnEl){
+    btnEl.classList.add('just-added');
+    setTimeout(()=>btnEl.classList.remove('just-added'), 380);
+  }
+}
+
+function updateQty(key, delta){
+  const item = cart.find(c => c.key === key);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0){ cart = cart.filter(c => c.key !== key); }
+  saveCart();
+}
+
+function removeFromCart(key){
+  cart = cart.filter(c => c.key !== key);
+  saveCart();
+}
+
+function cartSubtotal(){ return cart.reduce((s,c) => s + c.price * c.qty, 0); }
+function cartItemCount(){ return cart.reduce((s,c) => s + c.qty, 0); }
+function fmt(n){ return 'Rs ' + n.toLocaleString(); }
+
+function renderCart(){
+  const container = document.getElementById('cartItems');
+  const checkoutBtn = document.getElementById('openCheckout');
+  if(cart.length === 0){
+    container.innerHTML = `<div class="cart-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      <span>Your cart is empty.<br>Add something tasty from the menu!</span>
+    </div>`;
+    checkoutBtn.disabled = true;
+  } else {
+    container.innerHTML = cart.map(c => `
+      <div class="cart-item">
+        <div>
+          <div class="ci-name">${escapeHtml(c.name)}${c.variant ? ' <span class="ci-variant">(' + escapeHtml(c.variant) + ')</span>' : ''}</div>
+          <div class="ci-unit">${fmt(c.price)} each</div>
+        </div>
+        <div class="ci-total">${fmt(c.price * c.qty)}</div>
+        <div class="ci-controls">
+          <div class="qty-group">
+            <button class="qty-btn" onclick="updateQty('${c.key}',-1)" aria-label="Decrease quantity">−</button>
+            <span class="qty-val">${c.qty}</span>
+            <button class="qty-btn" onclick="updateQty('${c.key}',1)" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="ci-remove" onclick="removeFromCart('${c.key}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>
+            Remove
+          </button>
+        </div>
+      </div>
+    `).join('');
+    checkoutBtn.disabled = false;
+  }
+  document.getElementById('cartSubtotal').textContent = fmt(cartSubtotal());
+  document.getElementById('checkoutItemCount').textContent = cartItemCount() + (cartItemCount() === 1 ? ' item' : ' items');
+  document.getElementById('checkoutSubtotal').textContent = fmt(cartSubtotal());
+}
+
+function updateCartCount(){
+  const count = cartItemCount();
+  [document.getElementById('cartCountDesktop'), document.getElementById('cartCountMobile')].forEach(el => {
+    if(!el) return;
+    el.textContent = count;
+    el.style.display = count > 0 ? 'flex' : 'none';
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+let toastTimer;
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+/* =========================================================
+   MENU RENDERING
+   ========================================================= */
+function priceLabel(p){ return fmt(p); }
+
+function buildMenuItemRow(group, item){
+  const itemVariants = item.variants || group.variants;
+  const priceArr = item.prices || [item.price];
+  const displayName = group.singleFlavor ? group.name : item.name;
+
+  const row = document.createElement('div');
+  row.className = 'menu-item';
+
+  let variantHtml = '';
+  if(itemVariants){
+    variantHtml = `<div class="mi-variants">` + itemVariants.map((v,i) =>
+      `<button type="button" class="variant-chip ${i===0?'active':''}" data-i="${i}">${v}</button>`
+    ).join('') + `</div>`;
+  }
+
+  row.innerHTML = `
+    <div class="mi-main">
+      <span class="mi-name">${escapeHtml(displayName)}${item.note ? ' <span class="group-note">(' + escapeHtml(item.note) + ')</span>' : ''}</span>
+      ${variantHtml}
+    </div>
+    <div class="mi-side">
+      <span class="mi-price">${priceLabel(priceArr[0])}</span>
+      <button type="button" class="mi-add" aria-label="Add ${escapeHtml(displayName)} to cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+  `;
+
+  let selectedIdx = 0;
+  const priceEl = row.querySelector('.mi-price');
+  const chips = row.querySelectorAll('.variant-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedIdx = parseInt(chip.dataset.i, 10);
+      priceEl.textContent = priceLabel(priceArr[selectedIdx]);
     });
-  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  });
 
-  sections.forEach(s => s && spyObserver.observe(s));
+  row.querySelector('.mi-add').addEventListener('click', (e) => {
+    const variantLabel = itemVariants ? itemVariants[selectedIdx] : null;
+    const price = priceArr[selectedIdx];
+    addToCart(group.name, displayName, variantLabel, price, e.currentTarget);
+  });
 
-  // Scroll-reveal for groups, deal cards, section heads, location
-  const revealTargets = document.querySelectorAll('.group, .deal-card, .section-head, .location-wrap');
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        entry.target.style.transitionDelay = (i % 4) * 0.06 + 's';
-        entry.target.classList.add('revealed');
-        revealObserver.unobserve(entry.target);
-      }
+  return row;
+}
+
+function buildGroup(group){
+  const el = document.createElement('div');
+  el.className = 'group';
+
+  let headHtml = `<div class="group-head"><div class="group-name"><span class="star">★</span>${escapeHtml(group.name)}${group.note ? ' <span class="group-note">' + escapeHtml(group.note) + '</span>' : ''}</div>`;
+  if(group.variants){
+    headHtml += `<div class="size-tiers">${group.variants.map(v => `<span class="size-pill">${v}</span>`).join('')}</div>`;
+  }
+  headHtml += `</div>`;
+
+  const listEl = document.createElement('div');
+  listEl.className = 'item-list' + (group.plainGrid ? ' plain-grid' : '');
+  group.items.forEach(item => listEl.appendChild(buildMenuItemRow(group, item)));
+
+  el.innerHTML = headHtml;
+  el.appendChild(listEl);
+  return el;
+}
+
+function renderMenu(){
+  Object.keys(MENU_DATA).forEach(containerId => {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    MENU_DATA[containerId].forEach(group => container.appendChild(buildGroup(group)));
+  });
+}
+
+function renderDeals(){
+  const container = document.getElementById('c-deals');
+  DEALS_DATA.forEach(deal => {
+    const card = document.createElement('div');
+    card.className = 'deal-card';
+    card.innerHTML = `
+      <div class="deal-name">${escapeHtml(deal.name)}</div>
+      <div class="deal-price">${priceLabel(deal.price)}</div>
+      <div class="deal-items">${escapeHtml(deal.desc)}</div>
+      <button type="button" class="deal-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+        Add to Cart
+      </button>
+    `;
+    card.querySelector('.deal-add').addEventListener('click', (e) => {
+      addToCart('Deals', deal.name, null, deal.price, e.currentTarget);
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    container.appendChild(card);
+  });
+}
 
-  revealTargets.forEach(t => revealObserver.observe(t));
+/* =========================================================
+   CART DRAWER + CHECKOUT MODAL
+   ========================================================= */
+const cartDrawer = document.getElementById('cartDrawer');
+const cartOverlay = document.getElementById('cartOverlay');
+const checkoutModal = document.getElementById('checkoutModal');
+const checkoutOverlay = document.getElementById('checkoutOverlay');
+
+function openCart(){
+  cartDrawer.classList.add('open');
+  cartOverlay.classList.add('open');
+}
+function closeCart(){
+  cartDrawer.classList.remove('open');
+  cartOverlay.classList.remove('open');
+}
+document.getElementById('cartToggleDesktop').addEventListener('click', openCart);
+document.getElementById('cartToggleMobile').addEventListener('click', openCart);
+document.getElementById('cartClose').addEventListener('click', closeCart);
+cartOverlay.addEventListener('click', closeCart);
+
+let orderType = 'Delivery';
+function openCheckout(){
+  if(cart.length === 0) return;
+  closeCart();
+  checkoutModal.classList.add('open');
+  checkoutOverlay.classList.add('open');
+}
+function closeCheckout(){
+  checkoutModal.classList.remove('open');
+  checkoutOverlay.classList.remove('open');
+  document.getElementById('checkoutError').classList.remove('show');
+}
+document.getElementById('openCheckout').addEventListener('click', openCheckout);
+document.getElementById('checkoutClose').addEventListener('click', closeCheckout);
+checkoutOverlay.addEventListener('click', closeCheckout);
+
+const typeDelivery = document.getElementById('typeDelivery');
+const typePickup = document.getElementById('typePickup');
+const addressField = document.getElementById('addressField');
+typeDelivery.addEventListener('click', () => {
+  orderType = 'Delivery';
+  typeDelivery.classList.add('active');
+  typePickup.classList.remove('active');
+  addressField.style.display = '';
+});
+typePickup.addEventListener('click', () => {
+  orderType = 'Pickup';
+  typePickup.classList.add('active');
+  typeDelivery.classList.remove('active');
+  addressField.style.display = 'none';
+});
+
+document.getElementById('placeOrderBtn').addEventListener('click', () => {
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
+  const errorEl = document.getElementById('checkoutError');
+
+  if(!name || !phone || (orderType === 'Delivery' && !address)){
+    errorEl.textContent = orderType === 'Delivery'
+      ? 'Please fill in your name, phone number, and delivery address.'
+      : 'Please fill in your name and phone number.';
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+
+  let msg = `*New Order — Bursa*\n\n`;
+  msg += `*Name:* ${name}\n`;
+  msg += `*Phone:* ${phone}\n`;
+  msg += `*Order Type:* ${orderType}\n`;
+  if(orderType === 'Delivery'){ msg += `*Address:* ${address}\n`; }
+  msg += `\n*Items:*\n`;
+  cart.forEach(c => {
+    msg += `• ${c.qty}x ${c.name}${c.variant ? ' (' + c.variant + ')' : ''} — ${fmt(c.price * c.qty)}\n`;
+  });
+  msg += `\n*Subtotal: ${fmt(cartSubtotal())}*\n`;
+  msg += `\n_(Delivery charges, if any, to be confirmed on call)_`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+document.getElementById('year').textContent = new Date().getFullYear();
+renderMenu();
+renderDeals();
+renderCart();
+updateCartCount();
+
+// Floating nav: shrink/emphasize on scroll
+const floatNav = document.getElementById('floatNav');
+const onScroll = () => {
+  if (window.scrollY > 40) floatNav.classList.add('scrolled');
+  else floatNav.classList.remove('scrolled');
+};
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Scrollspy for category nav
+const links = Array.from(document.querySelectorAll('.nav-link'));
+const sections = links.map(l => document.querySelector(l.getAttribute('href')));
+
+const spyObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const idx = sections.indexOf(entry.target);
+    if (idx === -1) return;
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      links[idx].classList.add('active');
+      links[idx].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    }
+  });
+}, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+sections.forEach(s => s && spyObserver.observe(s));
+
+// Scroll-reveal for groups, deal cards, section heads, location
+const revealTargets = document.querySelectorAll('.group, .deal-card, .section-head, .location-wrap');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      entry.target.style.transitionDelay = (i % 4) * 0.06 + 's';
+      entry.target.classList.add('revealed');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+revealTargets.forEach(t => revealObserver.observe(t));
 </script>
 
 </body>
