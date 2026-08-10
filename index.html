@@ -190,6 +190,25 @@
     from{opacity:0; transform:translateY(18px);}
     to{opacity:1; transform:translateY(0);}
   }
+
+  /* ---------- live open/closed status ---------- */
+  .status-badge{
+    animation-delay:.02s;
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:0.78rem; font-weight:600;
+    padding:7px 15px; border-radius:999px; margin-bottom:16px;
+    border:1px solid var(--line-strong);
+  }
+  .status-dot{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  .status-badge.open{color:var(--green); border-color:rgba(37,211,102,0.4); background:rgba(37,211,102,0.08);}
+  .status-badge.open .status-dot{background:var(--green); animation:pulseDot 2s infinite;}
+  .status-badge.closed{color:var(--red-bright); border-color:rgba(214,40,40,0.4); background:rgba(214,40,40,0.08);}
+  .status-badge.closed .status-dot{background:var(--red-bright);}
+  @keyframes pulseDot{
+    0%{box-shadow:0 0 0 0 rgba(37,211,102,0.5);}
+    70%{box-shadow:0 0 0 8px rgba(37,211,102,0);}
+    100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}
+  }
   .hero-eyebrow{
     font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.22em;
     text-transform:uppercase; color:var(--gold);
@@ -654,6 +673,7 @@
       opacity:1; transform:none; transition:none;
     }
     .cart-drawer, .modal, .overlay, .toast{transition:none;}
+    .status-dot{animation:none;}
   }
 </style>
 </head>
@@ -694,6 +714,10 @@
 <!-- ================= HERO ================= -->
 <section class="hero">
   <img class="hero-logo" src="assets/logo.png" alt="Bursa">
+  <div class="status-badge" id="statusBadge">
+    <span class="status-dot"></span>
+    <span id="statusText">Checking hours…</span>
+  </div>
   <div class="hero-eyebrow"><span class="rule"></span> Fire-Baked · Fast Food · Order on WhatsApp <span class="rule"></span></div>
   <h1 class="hero-title">Build Your <span>Bursa</span> Order</h1>
   <p class="hero-sub">Browse the full menu, add what you're craving to your cart, and send your order straight to us on WhatsApp — no account, no app.</p>
@@ -1689,6 +1713,30 @@ document.getElementById('reorderDismiss').addEventListener('click', () => {
 });
 
 /* =========================================================
+   LIVE OPEN / CLOSED STATUS (Asia/Karachi, 12:00 PM – 2:00 AM daily)
+   ========================================================= */
+function updateOpenStatus(){
+  const badge = document.getElementById('statusBadge');
+  const textEl = document.getElementById('statusText');
+  if(!badge || !textEl) return;
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Karachi', hour12: false, hour: '2-digit', minute: '2-digit'
+  }).formatToParts(new Date());
+  const hour = parseInt(parts.find(p => p.type === 'hour').value, 10);
+
+  const isOpen = hour >= 12 || hour < 2;
+
+  if(isOpen){
+    badge.className = 'status-badge open';
+    textEl.textContent = 'Open Now · Closes 2:00 AM';
+  } else {
+    badge.className = 'status-badge closed';
+    textEl.textContent = 'Closed Now · Opens 12:00 PM';
+  }
+}
+
+/* =========================================================
    INIT
    ========================================================= */
 document.getElementById('year').textContent = new Date().getFullYear();
@@ -1697,6 +1745,8 @@ renderDeals();
 renderCart();
 updateCartCount();
 checkLastOrder();
+updateOpenStatus();
+setInterval(updateOpenStatus, 60 * 1000);
 
 // Silently expire an inactive cart every minute, even if the tab stays open
 setInterval(() => {
