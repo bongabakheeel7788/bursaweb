@@ -836,6 +836,10 @@
     <label for="custAddress">Delivery Address</label>
     <textarea id="custAddress" placeholder="House #, street, area, landmark"></textarea>
   </div>
+  <div class="field">
+    <label for="custNotes">Order Notes <span style="text-transform:none; opacity:0.7;">(optional)</span></label>
+    <textarea id="custNotes" placeholder="e.g. no onions, extra spicy, less oil..."></textarea>
+  </div>
 
   <div class="checkout-summary">
     <span id="checkoutItemCount">0 items</span>
@@ -1446,6 +1450,7 @@ document.getElementById('placeOrderBtn').addEventListener('click', () => {
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
+  const notes = document.getElementById('custNotes').value.trim();
   const errorEl = document.getElementById('checkoutError');
 
   if(!name || !phone || (orderType === 'Delivery' && !address)){
@@ -1467,13 +1472,15 @@ document.getElementById('placeOrderBtn').addEventListener('click', () => {
     msg += `• ${c.qty}x ${c.name}${c.variant ? ' (' + c.variant + ')' : ''} — ${fmt(c.price * c.qty)}\n`;
   });
   msg += `\n*Subtotal: ${fmt(cartSubtotal())}*\n`;
+  if(notes){ msg += `\n*Notes:* ${notes}\n`; }
   msg += `\n_(Delivery charges, if any, to be confirmed on call)_`;
 
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 
-  // Order sent — clear the cart so it doesn't linger for next visit
+  // Order sent — clear the cart and notes so they don't linger for next visit
   clearCart();
+  document.getElementById('custNotes').value = '';
   closeCheckout();
   showToast('Order sent! Your cart has been cleared.');
 });
