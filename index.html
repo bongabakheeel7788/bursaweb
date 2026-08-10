@@ -1031,11 +1031,47 @@ const WHATSAPP_NUMBER = "923399880003";
 /* =========================================================
    CART STATE
    ========================================================= */
+const CART_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
+
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem('bursaCart')) || []; } catch(e){ cart = []; }
 
+function isCartExpired(){
+  const ts = parseInt(localStorage.getItem('bursaCartTimestamp') || '0', 10);
+  if(!ts) return false;
+  return (Date.now() - ts) > CART_EXPIRY_MS;
+}
+
+function clearExpiredCartIfNeeded(){
+  if(cart.length > 0 && isCartExpired()){
+    cart = [];
+    try {
+      localStorage.removeItem('bursaCart');
+      localStorage.removeItem('bursaCartTimestamp');
+    } catch(e){}
+    return true;
+  }
+  return false;
+}
+
+// Silently drop a stale cart on load (older than 30 min of inactivity)
+clearExpiredCartIfNeeded();
+
 function saveCart(){
-  try { localStorage.setItem('bursaCart', JSON.stringify(cart)); } catch(e){}
+  try {
+    localStorage.setItem('bursaCart', JSON.stringify(cart));
+    localStorage.setItem('bursaCartTimestamp', String(Date.now()));
+  } catch(e){}
+  renderCart();
+  updateCartCount();
+}
+
+function clearCart(){
+  cart = [];
+  try {
+    localStorage.removeItem('bursaCart');
+    localStorage.removeItem('bursaCartTimestamp');
+  } catch(e){}
   renderCart();
   updateCartCount();
 }
@@ -1317,6 +1353,11 @@ document.getElementById('placeOrderBtn').addEventListener('click', () => {
 
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
+
+  // Order sent — clear the cart so it doesn't linger for next visit
+  clearCart();
+  closeCheckout();
+  showToast('Order sent! Your cart has been cleared.');
 });
 
 /* =========================================================
@@ -1327,6 +1368,14 @@ renderMenu();
 renderDeals();
 renderCart();
 updateCartCount();
+
+// Silently expire an inactive cart every minute, even if the tab stays open
+setInterval(() => {
+  if(clearExpiredCartIfNeeded()){
+    renderCart();
+    updateCartCount();
+  }
+}, 60 * 1000);
 
 // Floating nav: shrink/emphasize on scroll
 const floatNav = document.getElementById('floatNav');
