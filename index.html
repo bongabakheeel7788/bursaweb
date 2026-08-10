@@ -338,6 +338,14 @@
   .menu-item:hover{background:var(--surface-2);}
   .mi-main{display:flex; flex-direction:column; gap:5px; flex:1; min-width:150px;}
   .mi-name{font-size:0.96rem; color:var(--cream); font-weight:500;}
+  .bestseller-badge{
+    display:inline-flex; align-items:center; gap:3px;
+    font-family:var(--font-mono); font-size:0.58rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.03em;
+    background:linear-gradient(135deg, var(--red), var(--gold));
+    color:#fff; padding:2px 7px; border-radius:5px;
+    vertical-align:middle; margin-left:6px; white-space:nowrap;
+  }
   .mi-variants{display:flex; gap:4px; flex-wrap:wrap;}
   .variant-chip{
     font-family:var(--font-mono); font-size:0.64rem; font-weight:700;
@@ -988,19 +996,19 @@ const MENU_DATA = {
       ]},
     { name:"Stuff Crust Special — Round", variants:["M","L","XL"],
       items:[
-        {name:"Chicken & Cheese Stuffer", prices:[1390,1790,2190]},
+        {name:"Chicken & Cheese Stuffer", prices:[1390,1790,2190], bestseller:true},
         {name:"Kebab Stuffer", prices:[1390,1790,2190]},
         {name:"Cheese Stuffer", prices:[1390,1790,2190]}
       ]},
     { name:"Stuff Crust Special — Square", variants:["M","L"],
       items:[
-        {name:"Chicken & Cheese Stuffer", prices:[1450,1850]},
+        {name:"Chicken & Cheese Stuffer", prices:[1450,1850], bestseller:true},
         {name:"Kebab Stuffer", prices:[1450,1850]},
         {name:"Cheese Stuffer", prices:[1450,1850]}
       ]},
     { name:"Somewhat Special", variants:["S","M","L","XL"],
       items:[
-        {name:"Bursa Special", prices:[690,1190,1490,1890]},
+        {name:"Bursa Special", prices:[690,1190,1490,1890], bestseller:true},
         {name:"Supreme Lebistro", prices:[690,1190,1490,1890]},
         {name:"Super Supreme", prices:[690,1190,1490,1890]},
         {name:"Bone Fire", prices:[690,1190,1490,1890]},
@@ -1022,13 +1030,13 @@ const MENU_DATA = {
   "c-wings-burgers": [
     { name:"Wings", variants:["6pc","12pc"],
       items:[
-        {name:"Crispy Hot Wings", prices:[400,750]},
+        {name:"Crispy Hot Wings", prices:[400,750], bestseller:true},
         {name:"Oven Baked Wings", prices:[350,700]},
         {name:"Peri Peri Wings", prices:[400,750]}
       ]},
     { name:"Burgers",
       items:[
-        {name:"Zinger Burger", price:350},
+        {name:"Zinger Burger", price:350, bestseller:true},
         {name:"Crispy Patty Burger", price:300},
         {name:"Fire Baked Chicken Burger", price:450},
         {name:"Big Stacker Burger", price:550}
@@ -1039,7 +1047,7 @@ const MENU_DATA = {
       items:[
         {name:"Flaming Pasta", prices:[400,800]},
         {name:"Crunchy Pasta", prices:[450,850]},
-        {name:"Bursa Special Pasta", prices:[490,890]}
+        {name:"Bursa Special Pasta", prices:[490,890], bestseller:true}
       ]},
     { name:"Rolls", note:"4 pcs",
       items:[
@@ -1363,7 +1371,7 @@ function buildMenuItemRow(group, item){
 
   row.innerHTML = `
     <div class="mi-main">
-      <span class="mi-name">${escapeHtml(displayName)}${item.note ? ' <span class="group-note">(' + escapeHtml(item.note) + ')</span>' : ''}</span>
+      <span class="mi-name">${escapeHtml(displayName)}${item.note ? ' <span class="group-note">(' + escapeHtml(item.note) + ')</span>' : ''}${item.bestseller ? ' <span class="bestseller-badge">🔥 Bestseller</span>' : ''}</span>
       ${variantHtml}
     </div>
     <div class="mi-control"></div>
