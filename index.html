@@ -261,44 +261,60 @@
   }
 
   /* ---------- menu items (data-driven, cart-enabled) ---------- */
-  .item-list{display:grid; gap:4px;}
+  .item-list{display:grid; gap:2px;}
   .menu-item{
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
-    padding:12px 8px; border-radius:10px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:9px 8px; border-radius:10px;
     transition:background .2s;
     flex-wrap:wrap;
   }
   .menu-item:hover{background:var(--surface-2);}
-  .mi-main{display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;}
-  .mi-name{font-size:0.98rem; color:var(--cream); font-weight:500;}
-  .mi-variants{display:flex; gap:5px; flex-wrap:wrap;}
+  .mi-main{display:flex; flex-direction:column; gap:5px; flex:1; min-width:150px;}
+  .mi-name{font-size:0.96rem; color:var(--cream); font-weight:500;}
+  .mi-variants{display:flex; gap:4px; flex-wrap:wrap;}
   .variant-chip{
-    font-family:var(--font-mono); font-size:0.68rem; font-weight:700;
+    font-family:var(--font-mono); font-size:0.64rem; font-weight:700;
     background:var(--bg-elevated); color:var(--muted);
     border:1px solid var(--line); border-radius:6px;
-    padding:4px 8px; transition:all .15s;
+    padding:3px 7px; transition:all .15s;
   }
   .variant-chip:hover{border-color:var(--line-strong); color:var(--cream);}
   .variant-chip.active{background:var(--gold); color:var(--bg); border-color:var(--gold);}
-  .mi-side{display:flex; align-items:center; gap:10px; flex-shrink:0;}
-  .mi-price{
-    font-family:var(--font-mono); font-size:0.92rem; font-weight:600; color:var(--gold-bright);
-    white-space:nowrap; min-width:64px; text-align:right;
-  }
-  .mi-add{
-    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  .mi-control{flex-shrink:0;}
+
+  /* single Add pill (icon + label + live price) */
+  .mi-add-pill{
+    display:flex; align-items:center; gap:7px;
     background:var(--gold); color:var(--bg); border:none;
-    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:0.78rem;
+    padding:9px 14px; border-radius:999px; white-space:nowrap;
     transition:transform .15s, background .15s;
   }
-  .mi-add:hover{transform:scale(1.1) rotate(90deg); background:var(--gold-bright);}
-  .mi-add svg{width:16px; height:16px;}
-  .mi-add.just-added{animation:addPop .35s ease;}
+  .mi-add-pill:hover{transform:translateY(-1px); background:var(--gold-bright);}
+  .mi-add-pill svg{width:14px; height:14px; flex-shrink:0;}
+  .mi-add-pill .pill-price{opacity:0.8;}
+  .mi-add-pill.just-added{animation:addPop .35s ease;}
   @keyframes addPop{
     0%{transform:scale(1);}
-    40%{transform:scale(1.3); background:var(--green);}
+    40%{transform:scale(1.08); background:var(--green); color:#fff;}
     100%{transform:scale(1);}
   }
+
+  /* stepper shown once an item is in the cart */
+  .mi-stepper{
+    display:flex; align-items:center; gap:12px;
+    background:var(--surface-2); border:1px solid var(--gold);
+    border-radius:999px; padding:5px 8px;
+  }
+  .mi-step-btn{
+    width:24px; height:24px; border-radius:50%; border:none;
+    background:var(--gold); color:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; line-height:1; font-weight:700;
+    transition:background .15s;
+  }
+  .mi-step-btn:hover{background:var(--gold-bright);}
+  .mi-step-qty{font-family:var(--font-mono); font-weight:700; font-size:0.85rem; min-width:14px; text-align:center; color:var(--cream);}
 
   .plain-grid{display:grid; grid-template-columns:1fr 1fr; gap:2px 24px;}
   @media(max-width:560px){.plain-grid{grid-template-columns:1fr;}}
@@ -331,23 +347,7 @@
     margin:6px 0 12px;
   }
   .deal-items{font-size:0.88rem; color:var(--muted); line-height:1.6; margin-bottom:16px; flex:1;}
-  .deal-add{
-    align-self:flex-start;
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:var(--font-mono); font-weight:600; font-size:0.78rem;
-    background:var(--gold); color:var(--bg); border:none;
-    padding:9px 16px; border-radius:999px;
-    transition:transform .15s, background .15s;
-    position:relative; z-index:1;
-  }
-  .deal-add:hover{transform:translateY(-2px); background:var(--gold-bright);}
-  .deal-add svg{width:14px; height:14px;}
-  .deal-add.just-added{animation:addPopBtn .4s ease;}
-  @keyframes addPopBtn{
-    0%{transform:scale(1);}
-    40%{transform:scale(1.05); background:var(--green); color:#fff;}
-    100%{transform:scale(1);}
-  }
+  .deal-control{align-self:flex-start; position:relative; z-index:1;}
 
   /* ---------- footer ---------- */
   footer{
@@ -399,7 +399,9 @@
   .float-stack{
     position:fixed; bottom:20px; right:20px; z-index:60;
     display:flex; flex-direction:column; gap:12px; align-items:flex-end;
+    transition:bottom .3s ease;
   }
+  .float-stack.raised{bottom:92px;}
   .float-btn{
     width:56px; height:56px; border-radius:50%; border:none;
     display:flex; align-items:center; justify-content:center;
@@ -408,11 +410,35 @@
   .float-btn svg{width:22px; height:22px;}
   .float-call{background:var(--red); box-shadow:0 10px 24px rgba(214,40,40,0.45);}
   .float-whatsapp{background:var(--green); box-shadow:0 10px 24px rgba(37,211,102,0.45);}
-  .float-cart{background:var(--gold); color:var(--bg); box-shadow:0 10px 24px rgba(230,172,44,0.45);}
-  .float-cart .cart-count{border-color:var(--bg);}
 
-  @media(min-width:769px){.float-stack .float-call, .float-stack .float-whatsapp{display:none;}}
+  @media(min-width:769px){.float-stack{display:none;}}
   @media(max-width:768px){.float-nav{padding:6px 6px;}}
+
+  /* ---------- sticky cart bar ---------- */
+  .sticky-cart-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:55;
+    background:rgba(18,14,8,0.94);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    border-top:1px solid var(--line-strong);
+    padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    box-shadow:0 -14px 34px rgba(0,0,0,0.45);
+    transform:translateY(120%); transition:transform .32s cubic-bezier(.2,.8,.2,1);
+  }
+  .sticky-cart-bar.show{transform:translateY(0);}
+  .scb-info{display:flex; flex-direction:column; gap:2px;}
+  .scb-count{font-family:var(--font-mono); font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em;}
+  .scb-total{font-family:var(--font-mono); font-weight:700; font-size:1.15rem; color:var(--gold-bright);}
+  .scb-btn{
+    display:flex; align-items:center; gap:8px;
+    background:var(--gold); color:var(--bg); border:none;
+    font-family:var(--font-mono); font-weight:700; font-size:0.85rem;
+    padding:11px 20px; border-radius:999px; white-space:nowrap;
+    transition:transform .15s;
+  }
+  .scb-btn:hover{transform:translateY(-2px);}
+  .scb-btn svg{width:15px; height:15px;}
 
   /* ---------- cart drawer ---------- */
   .overlay{
@@ -741,17 +767,25 @@
   <div class="footer-note">Prices in PKR · Menu &amp; prices subject to change without notice · &copy; <span id="year"></span> Bursa</div>
 </footer>
 
-<div class="float-stack">
-  <button class="float-btn float-cart" id="cartToggleMobile" aria-label="View cart">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-    <span class="cart-count" id="cartCountMobile" style="display:none;">0</span>
-  </button>
+<div class="float-stack" id="floatStack">
   <a class="float-btn float-whatsapp" href="https://wa.me/923399880003" target="_blank" rel="noopener" aria-label="WhatsApp">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.65-4.95A9 9 0 1112 21a8.96 8.96 0 01-4.5-1.2z"/><path d="M8.5 8.5c0 4 3 7 7 7 .7 0 1.4-.6 1.4-1.3l-.1-1-2-.5-1 1.3a5.6 5.6 0 01-3.8-3.8l1.3-1-.5-2-1-.1c-.7 0-1.3.6-1.3 1.4z"/></svg>
   </a>
   <a class="float-btn float-call" href="tel:03399880002" aria-label="Call to order">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
   </a>
+</div>
+
+<!-- ================= STICKY CART BAR ================= -->
+<div class="sticky-cart-bar" id="stickyCartBar">
+  <div class="scb-info">
+    <span class="scb-count" id="scbCount">0 items</span>
+    <span class="scb-total" id="scbTotal">Rs 0</span>
+  </div>
+  <button class="scb-btn" id="scbViewCart">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+    View Cart
+  </button>
 </div>
 
 <!-- ================= CART DRAWER ================= -->
@@ -1149,11 +1183,32 @@ function renderCart(){
 
 function updateCartCount(){
   const count = cartItemCount();
-  [document.getElementById('cartCountDesktop'), document.getElementById('cartCountMobile')].forEach(el => {
-    if(!el) return;
+  const el = document.getElementById('cartCountDesktop');
+  if(el){
     el.textContent = count;
     el.style.display = count > 0 ? 'flex' : 'none';
-  });
+  }
+
+  const bar = document.getElementById('stickyCartBar');
+  const floatStack = document.getElementById('floatStack');
+  if(count > 0){
+    bar.classList.add('show');
+    document.getElementById('scbCount').textContent = count + (count === 1 ? ' item' : ' items');
+    document.getElementById('scbTotal').textContent = fmt(cartSubtotal());
+    if(floatStack) floatStack.classList.add('raised');
+  } else {
+    bar.classList.remove('show');
+    if(floatStack) floatStack.classList.remove('raised');
+  }
+
+  syncInlineControls();
+}
+
+// Registered by each rendered menu item / deal so its Add-pill/stepper
+// can refresh whenever the cart changes from anywhere (drawer, other rows, etc.)
+const inlineControlUpdaters = [];
+function syncInlineControls(){
+  inlineControlUpdaters.forEach(fn => fn());
 }
 
 function escapeHtml(str){
@@ -1196,31 +1251,63 @@ function buildMenuItemRow(group, item){
       <span class="mi-name">${escapeHtml(displayName)}${item.note ? ' <span class="group-note">(' + escapeHtml(item.note) + ')</span>' : ''}</span>
       ${variantHtml}
     </div>
-    <div class="mi-side">
-      <span class="mi-price">${priceLabel(priceArr[0])}</span>
-      <button type="button" class="mi-add" aria-label="Add ${escapeHtml(displayName)} to cart">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
-      </button>
-    </div>
+    <div class="mi-control"></div>
   `;
 
   let selectedIdx = 0;
-  const priceEl = row.querySelector('.mi-price');
+  let lastRenderedState = null;
+  const controlEl = row.querySelector('.mi-control');
   const chips = row.querySelectorAll('.variant-chip');
+
+  function currentKey(){
+    const variantLabel = itemVariants ? itemVariants[selectedIdx] : null;
+    return cartKey(group.name, displayName, variantLabel);
+  }
+
+  function renderControl(force){
+    const key = currentKey();
+    const price = priceArr[selectedIdx];
+    const cartEntry = cart.find(c => c.key === key);
+    const qty = cartEntry ? cartEntry.qty : 0;
+    const stateSig = key + ':' + qty;
+    if(!force && stateSig === lastRenderedState) return;
+    lastRenderedState = stateSig;
+
+    if(qty > 0){
+      controlEl.innerHTML = `
+        <div class="mi-stepper">
+          <button type="button" class="mi-step-btn mi-step-minus" aria-label="Decrease quantity">−</button>
+          <span class="mi-step-qty">${qty}</span>
+          <button type="button" class="mi-step-btn mi-step-plus" aria-label="Increase quantity">+</button>
+        </div>
+      `;
+      controlEl.querySelector('.mi-step-minus').addEventListener('click', () => updateQty(key, -1));
+      controlEl.querySelector('.mi-step-plus').addEventListener('click', () => updateQty(key, 1));
+    } else {
+      controlEl.innerHTML = `
+        <button type="button" class="mi-add-pill" aria-label="Add ${escapeHtml(displayName)} to cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add</span><span class="pill-price">${priceLabel(price)}</span>
+        </button>
+      `;
+      controlEl.querySelector('.mi-add-pill').addEventListener('click', (e) => {
+        const variantLabel = itemVariants ? itemVariants[selectedIdx] : null;
+        addToCart(group.name, displayName, variantLabel, price, e.currentTarget);
+      });
+    }
+  }
+
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       selectedIdx = parseInt(chip.dataset.i, 10);
-      priceEl.textContent = priceLabel(priceArr[selectedIdx]);
+      renderControl(true);
     });
   });
 
-  row.querySelector('.mi-add').addEventListener('click', (e) => {
-    const variantLabel = itemVariants ? itemVariants[selectedIdx] : null;
-    const price = priceArr[selectedIdx];
-    addToCart(group.name, displayName, variantLabel, price, e.currentTarget);
-  });
+  renderControl(true);
+  inlineControlUpdaters.push(() => renderControl(false));
 
   return row;
 }
@@ -1261,14 +1348,43 @@ function renderDeals(){
       <div class="deal-name">${escapeHtml(deal.name)}</div>
       <div class="deal-price">${priceLabel(deal.price)}</div>
       <div class="deal-items">${escapeHtml(deal.desc)}</div>
-      <button type="button" class="deal-add">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
-        Add to Cart
-      </button>
+      <div class="deal-control"></div>
     `;
-    card.querySelector('.deal-add').addEventListener('click', (e) => {
-      addToCart('Deals', deal.name, null, deal.price, e.currentTarget);
-    });
+    const controlEl = card.querySelector('.deal-control');
+    const key = cartKey('Deals', deal.name, null);
+    let lastRenderedState = null;
+
+    function renderControl(force){
+      const cartEntry = cart.find(c => c.key === key);
+      const qty = cartEntry ? cartEntry.qty : 0;
+      if(!force && qty === lastRenderedState) return;
+      lastRenderedState = qty;
+
+      if(qty > 0){
+        controlEl.innerHTML = `
+          <div class="mi-stepper">
+            <button type="button" class="mi-step-btn mi-step-minus" aria-label="Decrease quantity">−</button>
+            <span class="mi-step-qty">${qty}</span>
+            <button type="button" class="mi-step-btn mi-step-plus" aria-label="Increase quantity">+</button>
+          </div>
+        `;
+        controlEl.querySelector('.mi-step-minus').addEventListener('click', () => updateQty(key, -1));
+        controlEl.querySelector('.mi-step-plus').addEventListener('click', () => updateQty(key, 1));
+      } else {
+        controlEl.innerHTML = `
+          <button type="button" class="mi-add-pill" aria-label="Add ${escapeHtml(deal.name)} to cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Add to Cart</span>
+          </button>
+        `;
+        controlEl.querySelector('.mi-add-pill').addEventListener('click', (e) => {
+          addToCart('Deals', deal.name, null, deal.price, e.currentTarget);
+        });
+      }
+    }
+
+    renderControl(true);
+    inlineControlUpdaters.push(() => renderControl(false));
     container.appendChild(card);
   });
 }
@@ -1290,7 +1406,7 @@ function closeCart(){
   cartOverlay.classList.remove('open');
 }
 document.getElementById('cartToggleDesktop').addEventListener('click', openCart);
-document.getElementById('cartToggleMobile').addEventListener('click', openCart);
+document.getElementById('scbViewCart').addEventListener('click', openCart);
 document.getElementById('cartClose').addEventListener('click', closeCart);
 cartOverlay.addEventListener('click', closeCart);
 
