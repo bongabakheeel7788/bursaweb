@@ -233,6 +233,32 @@
   .social-row a:hover{color:var(--gold-bright); border-color:var(--gold);}
   .social-row svg{width:17px; height:17px;}
 
+  /* ---------- quick reorder banner ---------- */
+  .hero > .reorder-banner{opacity:1; animation:none;}
+  .reorder-banner{
+    display:none; align-items:center; justify-content:space-between; gap:14px;
+    max-width:480px; margin:0 auto 40px; padding:14px 18px;
+    background:var(--surface); border:1px solid var(--gold);
+    border-radius:14px; text-align:left;
+  }
+  .reorder-info{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .reorder-label{font-family:var(--font-mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);}
+  .reorder-detail{font-size:0.88rem; color:var(--cream);}
+  .reorder-detail b{color:var(--gold-bright); font-family:var(--font-mono);}
+  .reorder-actions{display:flex; align-items:center; gap:6px; flex-shrink:0;}
+  .reorder-btn{
+    background:var(--gold); color:var(--bg); border:none;
+    font-family:var(--font-mono); font-weight:700; font-size:0.76rem;
+    padding:9px 15px; border-radius:999px; white-space:nowrap;
+    transition:transform .15s, background .15s;
+  }
+  .reorder-btn:hover{transform:translateY(-1px); background:var(--gold-bright);}
+  .reorder-dismiss{
+    background:none; border:none; color:var(--muted);
+    font-size:1.15rem; line-height:1; padding:4px 6px;
+  }
+  .reorder-dismiss:hover{color:var(--cream);}
+
   /* ---------- section framework ---------- */
   section.menu-section{padding:56px 0 8px;}
   .section-head{
@@ -671,6 +697,16 @@
   <div class="hero-eyebrow"><span class="rule"></span> Fire-Baked · Fast Food · Order on WhatsApp <span class="rule"></span></div>
   <h1 class="hero-title">Build Your <span>Bursa</span> Order</h1>
   <p class="hero-sub">Browse the full menu, add what you're craving to your cart, and send your order straight to us on WhatsApp — no account, no app.</p>
+  <div class="reorder-banner" id="reorderBanner">
+    <div class="reorder-info">
+      <span class="reorder-label">Order again</span>
+      <span class="reorder-detail" id="reorderDetail">0 items · Rs 0</span>
+    </div>
+    <div class="reorder-actions">
+      <button type="button" class="reorder-btn" id="reorderBtn">🔁 Reorder</button>
+      <button type="button" class="reorder-dismiss" id="reorderDismiss" aria-label="Dismiss">×</button>
+    </div>
+  </div>
   <div class="hero-actions">
     <a class="btn btn-primary" href="#pizzas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7z"/></svg>
@@ -1529,7 +1565,8 @@ document.getElementById('placeOrderBtn').addEventListener('click', () => {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 
-  // Order sent — clear the cart and notes so they don't linger for next visit
+  // Order sent — save a snapshot for "Quick Reorder", then clear the cart and notes
+  saveLastOrder();
   clearCart();
   document.getElementById('custNotes').value = '';
   closeCheckout();
@@ -1596,6 +1633,62 @@ if('serviceWorker' in navigator){
 }
 
 /* =========================================================
+   QUICK REORDER
+   ========================================================= */
+function saveLastOrder(){
+  try {
+    const snapshot = {
+      items: cart.map(c => ({ key:c.key, name:c.name, groupName:c.groupName, variant:c.variant, price:c.price, qty:c.qty })),
+      timestamp: Date.now()
+    };
+    localStorage.setItem('bursaLastOrder', JSON.stringify(snapshot));
+    localStorage.removeItem('bursaReorderDismissedFor');
+  } catch(e){}
+}
+
+function getLastOrder(){
+  try {
+    const raw = localStorage.getItem('bursaLastOrder');
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+
+function checkLastOrder(){
+  const last = getLastOrder();
+  if(!last || !last.items || last.items.length === 0) return;
+
+  let dismissedFor = null;
+  try { dismissedFor = localStorage.getItem('bursaReorderDismissedFor'); } catch(e){}
+  if(dismissedFor === String(last.timestamp)) return;
+
+  const count = last.items.reduce((s,i) => s + i.qty, 0);
+  const total = last.items.reduce((s,i) => s + i.qty * i.price, 0);
+  document.getElementById('reorderDetail').innerHTML =
+    `${count} ${count === 1 ? 'item' : 'items'} · <b>${fmt(total)}</b>`;
+  document.getElementById('reorderBanner').style.display = 'flex';
+}
+
+document.getElementById('reorderBtn').addEventListener('click', () => {
+  const last = getLastOrder();
+  if(!last) return;
+  last.items.forEach(item => {
+    const existing = cart.find(c => c.key === item.key);
+    if(existing){ existing.qty += item.qty; }
+    else { cart.push({ key:item.key, name:item.name, groupName:item.groupName, variant:item.variant, price:item.price, qty:item.qty }); }
+  });
+  saveCart();
+  document.getElementById('reorderBanner').style.display = 'none';
+  showToast('Last order added to your cart!');
+  openCart();
+});
+
+document.getElementById('reorderDismiss').addEventListener('click', () => {
+  const last = getLastOrder();
+  document.getElementById('reorderBanner').style.display = 'none';
+  try { if(last) localStorage.setItem('bursaReorderDismissedFor', String(last.timestamp)); } catch(e){}
+});
+
+/* =========================================================
    INIT
    ========================================================= */
 document.getElementById('year').textContent = new Date().getFullYear();
@@ -1603,6 +1696,7 @@ renderMenu();
 renderDeals();
 renderCart();
 updateCartCount();
+checkLastOrder();
 
 // Silently expire an inactive cart every minute, even if the tab stays open
 setInterval(() => {
