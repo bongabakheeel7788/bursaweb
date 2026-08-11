@@ -1026,19 +1026,6 @@
   <span id="toastText">Added to cart</span>
 </div>
 
-<!-- ================= REVIEW REMINDER OPT-IN ================= -->
-<div class="overlay modal-overlay" id="reviewPromptOverlay"></div>
-<div class="modal" id="reviewPromptModal" style="max-width:380px;">
-  <div class="modal-head"><h3>One quick favor? 🙏</h3></div>
-  <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin-bottom:22px;">
-    We'll send a single reminder in about an hour to leave us a review on Google — only if you say yes, and only ever once per order.
-  </p>
-  <div style="display:flex; gap:10px;">
-    <button type="button" class="btn btn-ghost btn-block" id="reviewPromptNo">No thanks</button>
-    <button type="button" class="btn btn-primary btn-block" id="reviewPromptYes">Yes, remind me</button>
-  </div>
-</div>
-
 <script>
 /* =========================================================
    MENU DATA
@@ -1247,13 +1234,6 @@ const DEALS_DATA = [
 ];
 
 const WHATSAPP_NUMBER = "923399880003";
-
-// Review-reminder push notification config.
-// VAPID_PUBLIC_KEY is safe to expose (it's the public half of the key pair).
-// REVIEW_WORKER_URL must be filled in after deploying the Cloudflare Worker
-// in /worker — until then this feature silently does nothing.
-const VAPID_PUBLIC_KEY = "BBIzTIyerVqXAILdbeLAM9HoA0qWOeQyVDNSi_fKiS-W-Y5b7QuOSCbndNdtbjURVQrjezU3QWwitiMnbg1piRg";
-const REVIEW_WORKER_URL = ""; // e.g. "https://bursa-review-reminder.YOUR-SUBDOMAIN.workers.dev"
 
 /* =========================================================
    CART STATE
@@ -1671,9 +1651,6 @@ document.getElementById('placeOrderBtn').addEventListener('click', () => {
   document.getElementById('custNotes').value = '';
   closeCheckout();
   showToast('Order sent! Your cart has been cleared.');
-
-  // Offer a 1-hour-later review reminder (Android push notification)
-  setTimeout(() => { offerReviewReminder(); }, 1500);
 });
 
 /* =========================================================
@@ -1814,78 +1791,6 @@ function updateOpenStatus(){
     textEl.textContent = 'Closed Now · Opens 12:00 PM';
   }
 }
-
-/* =========================================================
-   REVIEW REMINDER (1-hour-later push notification, Android)
-   ========================================================= */
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
-  return outputArray;
-}
-
-function reviewRemindersSupported(){
-  return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
-}
-
-async function scheduleReviewPush(){
-  if(!REVIEW_WORKER_URL) return; // Worker not deployed/configured yet
-  try {
-    const reg = await navigator.serviceWorker.ready;
-    let sub = await reg.pushManager.getSubscription();
-    if(!sub){
-      sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      });
-    }
-    await fetch(REVIEW_WORKER_URL + '/schedule-review', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription: sub.toJSON() })
-    });
-  } catch(e){ /* non-critical — fail silently */ }
-}
-
-function closeReviewPrompt(){
-  document.getElementById('reviewPromptOverlay').classList.remove('open');
-  document.getElementById('reviewPromptModal').classList.remove('open');
-}
-
-async function offerReviewReminder(){
-  if(!reviewRemindersSupported()) return;
-  if(Notification.permission === 'denied') return;
-
-  let optedOut = false;
-  try { optedOut = localStorage.getItem('bursaReviewOptOut') === '1'; } catch(e){}
-  if(optedOut) return;
-
-  if(Notification.permission === 'granted'){
-    // Already allowed from a previous order — just schedule silently, no need to ask again.
-    scheduleReviewPush();
-    return;
-  }
-
-  document.getElementById('reviewPromptOverlay').classList.add('open');
-  document.getElementById('reviewPromptModal').classList.add('open');
-}
-
-document.getElementById('reviewPromptYes').addEventListener('click', async () => {
-  closeReviewPrompt();
-  const permission = await Notification.requestPermission();
-  if(permission === 'granted'){
-    await scheduleReviewPush();
-    showToast("Got it! We'll remind you in an hour 🙏");
-  }
-});
-document.getElementById('reviewPromptNo').addEventListener('click', () => {
-  closeReviewPrompt();
-  try { localStorage.setItem('bursaReviewOptOut', '1'); } catch(e){}
-});
-document.getElementById('reviewPromptOverlay').addEventListener('click', closeReviewPrompt);
 
 /* =========================================================
    INIT
