@@ -1,0 +1,16 @@
+name = "bursa-review-reminder"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Runs every 10 minutes to check for due review reminders.
+[triggers]
+crons = ["*/10 * * * *"]
+
+# Create this KV namespace in the Cloudflare dashboard, then paste its ID below
+# (Workers & Pages → KV → Create namespace → name it "REVIEW_KV").
+[[kv_namespaces]]
+binding = "REVIEW_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+# VAPID_PRIVATE_KEY is set separately as an encrypted secret — do NOT put it here.
+# Dashboard: Worker → Settings → Variables → Add secret.
