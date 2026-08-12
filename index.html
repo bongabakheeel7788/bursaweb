@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Bursa — Best Pizza & Fast Food in Tandlianwala</title>
 <meta name="description" content="Bursa — fire-baked pizzas, burgers, wings & the Bursa Bar in Tandlianwala. Browse the menu and order online. Open daily 12 PM to 2 AM.">
 <meta name="keywords" content="restaurant near me, Tandlianwala restaurant, pizza Tandlianwala, fast food Tandlianwala, Bursa restaurant, burgers Tandlianwala, food delivery Tandlianwala">
@@ -143,7 +143,7 @@
 
   /* ---------- floating glass nav ---------- */
   .float-nav{
-    position:fixed; top:16px; left:50%; transform:translateX(-50%);
+    position:fixed; top:calc(16px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
     z-index:50; width:calc(100% - 32px); max-width:860px;
     background:rgba(20,16,10,0.6);
     backdrop-filter:blur(18px) saturate(160%);
@@ -155,7 +155,7 @@
     transition:box-shadow .3s, border-color .3s, top .3s;
   }
   .float-nav.scrolled{
-    top:10px;
+    top:calc(10px + env(safe-area-inset-top));
     box-shadow:0 16px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
     border-color:var(--gold);
   }
@@ -199,6 +199,10 @@
     font-family:var(--font-body); font-size:1rem; outline:none;
   }
   .nav-search-box input::placeholder{color:var(--muted);}
+  .nav-search-count{
+    font-family:var(--font-mono); font-size:0.7rem; color:var(--gold);
+    white-space:nowrap; flex-shrink:0;
+  }
   .nav-search-close{
     width:30px; height:30px; border-radius:50%; flex-shrink:0; border:none;
     background:none; color:var(--muted); font-size:1.2rem; line-height:1;
@@ -563,11 +567,11 @@
 
   /* ---------- floating buttons (mobile) ---------- */
   .float-stack{
-    position:fixed; bottom:20px; right:20px; z-index:60;
+    position:fixed; bottom:calc(20px + env(safe-area-inset-bottom)); right:calc(20px + env(safe-area-inset-right)); z-index:60;
     display:flex; flex-direction:column; gap:12px; align-items:flex-end;
     transition:bottom .3s ease;
   }
-  .float-stack.raised{bottom:92px;}
+  .float-stack.raised{bottom:calc(92px + env(safe-area-inset-bottom));}
   .float-btn{
     width:56px; height:56px; border-radius:50%; border:none;
     display:flex; align-items:center; justify-content:center;
@@ -578,7 +582,7 @@
 
   /* ---------- back to top ---------- */
   .back-to-top{
-    position:fixed; bottom:20px; left:20px; z-index:59;
+    position:fixed; bottom:calc(20px + env(safe-area-inset-bottom)); left:calc(20px + env(safe-area-inset-left)); z-index:59;
     width:46px; height:46px; border-radius:50%;
     background:var(--surface); border:1px solid var(--line-strong);
     color:var(--gold-bright);
@@ -588,7 +592,7 @@
     transition:opacity .25s, transform .25s, bottom .3s ease;
   }
   .back-to-top.show{opacity:1; pointer-events:auto; transform:translateY(0);}
-  .back-to-top.raised{bottom:92px;}
+  .back-to-top.raised{bottom:calc(92px + env(safe-area-inset-bottom));}
   .back-to-top:active{transform:scale(0.88);}
   .back-to-top svg{width:19px; height:19px;}
   @media(min-width:769px){.back-to-top{display:none;}}
@@ -816,6 +820,7 @@
     </div>
     <div class="nav-search-box" id="navSearchBox">
       <input type="text" id="menuSearchInput" placeholder="Search the menu…" autocomplete="off">
+      <span class="nav-search-count" id="searchResultCount"></span>
       <button type="button" class="nav-search-close" id="navSearchClose" aria-label="Close search">×</button>
     </div>
     <div class="nav-quick-actions">
@@ -1910,6 +1915,7 @@ const navSearchClose = document.getElementById('navSearchClose');
 const menuSearchInput = document.getElementById('menuSearchInput');
 const navInner = document.getElementById('navInner');
 const noResultsEl = document.getElementById('noResults');
+const searchResultCount = document.getElementById('searchResultCount');
 
 function openMenuSearch(){
   navInner.style.display = 'none';
@@ -1925,37 +1931,57 @@ function closeMenuSearch(){
 navSearchToggle.addEventListener('click', openMenuSearch);
 navSearchClose.addEventListener('click', closeMenuSearch);
 
+// Section titles already double as natural search terms ("Pizzas", "Wings & Burgers"...).
+// This small list only covers common words that wouldn't otherwise match anything
+// (e.g. no item is literally named "drink").
+const SECTION_SEARCH_ALIASES = {
+  'beverages': ['drink', 'drinks', 'soda', 'cold drink'],
+  'bursa-bar': ['dessert', 'desserts'],
+};
+
 function applyMenuSearch(query){
   const q = query.trim().toLowerCase();
   let anyVisible = false;
+  let matchCount = 0;
 
-  document.querySelectorAll('.group').forEach(group => {
-    let groupHasMatch = false;
-    group.querySelectorAll('.menu-item').forEach(row => {
-      const name = (row.querySelector('.mi-name')?.textContent || '').toLowerCase();
-      const match = !q || name.includes(q);
-      row.style.display = match ? '' : 'none';
-      if(match) groupHasMatch = true;
+  document.querySelectorAll('section.menu-section').forEach(section => {
+    const sectionTitle = (section.querySelector('.section-title')?.textContent || '').toLowerCase();
+    const aliases = SECTION_SEARCH_ALIASES[section.id] || [];
+    const sectionWideMatch = !!q && (sectionTitle.includes(q) || aliases.some(a => a.includes(q) || q.includes(a)));
+
+    section.querySelectorAll('.group').forEach(group => {
+      let groupHasMatch = false;
+      group.querySelectorAll('.menu-item').forEach(row => {
+        const name = (row.querySelector('.mi-name')?.textContent || '').toLowerCase();
+        const match = !q || sectionWideMatch || name.includes(q);
+        row.style.display = match ? '' : 'none';
+        if(match){ groupHasMatch = true; matchCount++; }
+      });
+      group.style.display = groupHasMatch ? '' : 'none';
+      if(groupHasMatch){
+        anyVisible = true;
+        group.classList.add('revealed');
+      }
     });
-    group.style.display = groupHasMatch ? '' : 'none';
-    if(groupHasMatch){
-      anyVisible = true;
-      group.classList.add('revealed'); // ensure visible even if never scrolled into view
-    }
   });
 
+  const dealsAliasMatch = !!q && 'deals'.includes(q);
   document.querySelectorAll('.deal-card').forEach(card => {
     const name = (card.querySelector('.deal-name')?.textContent || '').toLowerCase();
     const desc = (card.querySelector('.deal-items')?.textContent || '').toLowerCase();
-    const match = !q || name.includes(q) || desc.includes(q);
+    const match = !q || dealsAliasMatch || name.includes(q) || desc.includes(q);
     card.style.display = match ? '' : 'none';
-    if(match){ anyVisible = true; card.classList.add('revealed'); }
+    if(match){ anyVisible = true; matchCount++; card.classList.add('revealed'); }
   });
 
   noResultsEl.classList.toggle('show', q.length > 0 && !anyVisible);
+  searchResultCount.textContent = q.length > 0 ? `${matchCount} found` : '';
 }
 
 menuSearchInput.addEventListener('input', (e) => applyMenuSearch(e.target.value));
+menuSearchInput.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){ menuSearchInput.blur(); } // dismiss mobile keyboard
+});
 
 /* =========================================================
    INIT
