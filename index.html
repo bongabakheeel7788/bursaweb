@@ -1926,6 +1926,7 @@ function closeMenuSearch(){
   navSearchBox.classList.remove('open');
   navInner.style.display = '';
   menuSearchInput.value = '';
+  clearTimeout(searchScrollTimer);
   applyMenuSearch('');
 }
 navSearchToggle.addEventListener('click', openMenuSearch);
@@ -1978,9 +1979,36 @@ function applyMenuSearch(query){
   searchResultCount.textContent = q.length > 0 ? `${matchCount} found` : '';
 }
 
-menuSearchInput.addEventListener('input', (e) => applyMenuSearch(e.target.value));
+function scrollToFirstMatch(){
+  const visibleGroups = Array.from(document.querySelectorAll('.group')).filter(g => g.style.display !== 'none');
+  const visibleDeals = Array.from(document.querySelectorAll('.deal-card')).filter(d => d.style.display !== 'none');
+  const candidates = [...visibleGroups, ...visibleDeals];
+  if(candidates.length === 0) return;
+
+  let target = candidates[0];
+  let minTop = target.getBoundingClientRect().top;
+  candidates.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    if(top < minTop){ minTop = top; target = el; }
+  });
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+let searchScrollTimer = null;
+menuSearchInput.addEventListener('input', (e) => {
+  const value = e.target.value;
+  applyMenuSearch(value);
+  clearTimeout(searchScrollTimer);
+  if(value.trim().length > 0){
+    searchScrollTimer = setTimeout(scrollToFirstMatch, 450);
+  }
+});
 menuSearchInput.addEventListener('keydown', (e) => {
-  if(e.key === 'Enter'){ menuSearchInput.blur(); } // dismiss mobile keyboard
+  if(e.key === 'Enter'){
+    clearTimeout(searchScrollTimer);
+    scrollToFirstMatch();
+    menuSearchInput.blur(); // dismiss mobile keyboard
+  }
 });
 
 /* =========================================================
