@@ -1650,13 +1650,26 @@ const cartOverlay = document.getElementById('cartOverlay');
 const checkoutModal = document.getElementById('checkoutModal');
 const checkoutOverlay = document.getElementById('checkoutOverlay');
 
+// Prevent the page from scrolling behind an open drawer/modal (common mobile issue)
+let scrollLockCount = 0;
+function lockBodyScroll(){
+  scrollLockCount++;
+  document.body.style.overflow = 'hidden';
+}
+function unlockBodyScroll(){
+  scrollLockCount = Math.max(0, scrollLockCount - 1);
+  if(scrollLockCount === 0){ document.body.style.overflow = ''; }
+}
+
 function openCart(){
   cartDrawer.classList.add('open');
   cartOverlay.classList.add('open');
+  lockBodyScroll();
 }
 function closeCart(){
   cartDrawer.classList.remove('open');
   cartOverlay.classList.remove('open');
+  unlockBodyScroll();
 }
 document.getElementById('cartToggleDesktop').addEventListener('click', openCart);
 document.getElementById('scbViewCart').addEventListener('click', openCart);
@@ -1669,11 +1682,13 @@ function openCheckout(){
   closeCart();
   checkoutModal.classList.add('open');
   checkoutOverlay.classList.add('open');
+  lockBodyScroll();
 }
 function closeCheckout(){
   checkoutModal.classList.remove('open');
   checkoutOverlay.classList.remove('open');
   document.getElementById('checkoutError').classList.remove('show');
+  unlockBodyScroll();
 }
 document.getElementById('openCheckout').addEventListener('click', openCheckout);
 document.getElementById('checkoutClose').addEventListener('click', closeCheckout);
