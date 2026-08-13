@@ -389,8 +389,34 @@
     position:sticky; top:0; background:var(--bg); z-index:2;
     padding:6px 0 14px;
   }
-  .glance-page .group{margin-bottom:14px; padding:16px 18px 20px;}
-  .glance-page .deals-grid{padding:0; gap:12px; display:grid; grid-template-columns:1fr;}
+  .glance-list-group{margin-bottom:20px;}
+  .glance-list-group-name{
+    font-family:var(--font-display); font-weight:600; font-size:0.95rem; color:var(--gold-bright);
+    padding-bottom:5px; margin-bottom:6px; border-bottom:1px solid var(--line);
+  }
+  .glance-list-note{font-family:var(--font-mono); font-size:0.66rem; color:var(--muted); font-weight:400; font-style:italic;}
+  .glance-list-row{display:flex; align-items:baseline; gap:6px; padding:4px 0;}
+  .glance-list-name{font-size:0.85rem; color:var(--cream); white-space:nowrap;}
+  .glance-list-dots{flex:1; min-width:10px; border-bottom:1px dotted var(--line-strong); transform:translateY(-3px);}
+  .glance-list-price{font-family:var(--font-mono); font-size:0.78rem; font-weight:600; color:var(--gold-bright); white-space:nowrap;}
+
+  .glance-deal-row{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+    padding:9px 0; border-bottom:1px dashed var(--line);
+  }
+  .glance-deal-main{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .glance-deal-desc{font-size:0.72rem; color:var(--muted); line-height:1.4;}
+
+  .glance-jump-btn{
+    position:sticky; bottom:0; left:0; right:0; width:100%; margin-top:14px;
+    background:var(--gold); color:var(--bg); border:none;
+    font-family:var(--font-mono); font-weight:700; font-size:0.82rem;
+    padding:12px; border-radius:999px;
+    box-shadow:0 -10px 24px rgba(10,8,6,0.5);
+    transition:transform .15s, background .15s;
+  }
+  .glance-jump-btn:hover{background:var(--gold-bright);}
+  .glance-jump-btn:active{transform:scale(0.97);}
 
   .glance-controls{
     display:flex; align-items:center; justify-content:center; gap:16px;
@@ -959,13 +985,41 @@
   </div>
 
   <div class="glance-carousel" id="glanceCarousel">
-    <div class="glance-page" data-index="0"><div class="glance-page-title">🍕 Pizzas</div><div class="glance-items" id="glance-pizzas"></div></div>
-    <div class="glance-page" data-index="1"><div class="glance-page-title">🍔 Wings &amp; Burgers</div><div class="glance-items" id="glance-wings-burgers"></div></div>
-    <div class="glance-page" data-index="2"><div class="glance-page-title">🍝 Pasta &amp; Rolls</div><div class="glance-items" id="glance-pasta-rolls"></div></div>
-    <div class="glance-page" data-index="3"><div class="glance-page-title">🥪 Sandwiches &amp; Sides</div><div class="glance-items" id="glance-sides"></div></div>
-    <div class="glance-page" data-index="4"><div class="glance-page-title">🥤 Beverages</div><div class="glance-items" id="glance-beverages"></div></div>
-    <div class="glance-page" data-index="5"><div class="glance-page-title">🍹 Bursa Bar</div><div class="glance-items" id="glance-bursa-bar"></div></div>
-    <div class="glance-page" data-index="6"><div class="glance-page-title">🎉 Deals</div><div class="glance-items deals-grid" id="glance-deals"></div></div>
+    <div class="glance-page" data-index="0">
+      <div class="glance-page-title">🍕 Pizzas</div>
+      <div class="glance-items" id="glance-pizzas"></div>
+      <button type="button" class="glance-jump-btn" data-target="pizzas">View &amp; Order →</button>
+    </div>
+    <div class="glance-page" data-index="1">
+      <div class="glance-page-title">🍔 Wings &amp; Burgers</div>
+      <div class="glance-items" id="glance-wings-burgers"></div>
+      <button type="button" class="glance-jump-btn" data-target="wings-burgers">View &amp; Order →</button>
+    </div>
+    <div class="glance-page" data-index="2">
+      <div class="glance-page-title">🍝 Pasta &amp; Rolls</div>
+      <div class="glance-items" id="glance-pasta-rolls"></div>
+      <button type="button" class="glance-jump-btn" data-target="pasta-rolls">View &amp; Order →</button>
+    </div>
+    <div class="glance-page" data-index="3">
+      <div class="glance-page-title">🥪 Sandwiches &amp; Sides</div>
+      <div class="glance-items" id="glance-sides"></div>
+      <button type="button" class="glance-jump-btn" data-target="sides">View &amp; Order →</button>
+    </div>
+    <div class="glance-page" data-index="4">
+      <div class="glance-page-title">🥤 Beverages</div>
+      <div class="glance-items" id="glance-beverages"></div>
+      <button type="button" class="glance-jump-btn" data-target="beverages">View &amp; Order →</button>
+    </div>
+    <div class="glance-page" data-index="5">
+      <div class="glance-page-title">🍹 Bursa Bar</div>
+      <div class="glance-items" id="glance-bursa-bar"></div>
+      <button type="button" class="glance-jump-btn" data-target="bursa-bar">View &amp; Order →</button>
+    </div>
+    <div class="glance-page" data-index="6">
+      <div class="glance-page-title">🎉 Deals</div>
+      <div class="glance-items" id="glance-deals"></div>
+      <button type="button" class="glance-jump-btn" data-target="deals">View &amp; Order →</button>
+    </div>
   </div>
 
   <div class="glance-controls">
@@ -1694,6 +1748,48 @@ function renderMenu(){
    MENU AT A GLANCE (swipeable carousel — reuses buildGroup/
    buildDealCard so it shares live cart state with the main list)
    ========================================================= */
+function buildGlanceListGroup(group){
+  const wrap = document.createElement('div');
+  wrap.className = 'glance-list-group';
+
+  const head = document.createElement('div');
+  head.className = 'glance-list-group-name';
+  head.innerHTML = escapeHtml(group.name) + (group.note ? ` <span class="glance-list-note">${escapeHtml(group.note)}</span>` : '');
+  wrap.appendChild(head);
+
+  group.items.forEach(item => {
+    const displayName = group.singleFlavor ? group.name : item.name;
+    const priceArr = item.prices || [item.price];
+    const priceText = priceArr.length > 1
+      ? `Rs ${Math.min(...priceArr)}–${Math.max(...priceArr)}`
+      : `Rs ${priceArr[0]}`;
+
+    const row = document.createElement('div');
+    row.className = 'glance-list-row';
+    row.innerHTML = `
+      <span class="glance-list-name">${escapeHtml(displayName)}${item.bestseller ? ' 🔥' : ''}</span>
+      <span class="glance-list-dots"></span>
+      <span class="glance-list-price">${priceText}</span>
+    `;
+    wrap.appendChild(row);
+  });
+
+  return wrap;
+}
+
+function buildGlanceDealRow(deal){
+  const row = document.createElement('div');
+  row.className = 'glance-deal-row';
+  row.innerHTML = `
+    <div class="glance-deal-main">
+      <span class="glance-list-name">${escapeHtml(deal.name)}</span>
+      <span class="glance-deal-desc">${escapeHtml(deal.desc)}</span>
+    </div>
+    <span class="glance-list-price">${priceLabel(deal.price)}</span>
+  `;
+  return row;
+}
+
 function renderGlanceCarousel(){
   const glanceMap = {
     'glance-pizzas': 'c-pizzas',
@@ -1706,13 +1802,21 @@ function renderGlanceCarousel(){
   Object.keys(glanceMap).forEach(glanceId => {
     const container = document.getElementById(glanceId);
     if(!container) return;
-    (MENU_DATA[glanceMap[glanceId]] || []).forEach(group => container.appendChild(buildGroup(group)));
+    (MENU_DATA[glanceMap[glanceId]] || []).forEach(group => container.appendChild(buildGlanceListGroup(group)));
   });
 
   const dealsGlanceContainer = document.getElementById('glance-deals');
   if(dealsGlanceContainer){
-    DEALS_DATA.forEach(deal => dealsGlanceContainer.appendChild(buildDealCard(deal)));
+    DEALS_DATA.forEach(deal => dealsGlanceContainer.appendChild(buildGlanceDealRow(deal)));
   }
+
+  // "View & Order" jump buttons — scroll down to the real interactive section
+  document.querySelectorAll('.glance-jump-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if(target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
 
   setupGlanceNav();
 }
