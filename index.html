@@ -367,6 +367,64 @@
   }
   .reorder-dismiss:hover{color:var(--cream);}
 
+  /* ---------- menu at a glance (swipeable carousel) ---------- */
+  .glance-section{padding:8px 0 44px;}
+  .glance-head{max-width:640px; margin:0 auto 26px; padding:0 24px; text-align:center;}
+  .glance-sub{color:var(--muted); font-size:0.88rem; margin-top:10px; line-height:1.5;}
+
+  .glance-carousel{
+    display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    scroll-behavior:smooth;
+  }
+  .glance-carousel::-webkit-scrollbar{display:none;}
+  .glance-page{
+    flex:0 0 100%; scroll-snap-align:start;
+    max-width:640px; margin:0 auto; padding:0 24px;
+    max-height:64vh; overflow-y:auto;
+  }
+  .glance-page-title{
+    font-family:var(--font-display); font-weight:700; font-size:1.3rem;
+    color:var(--gold-bright); text-align:center;
+    position:sticky; top:0; background:var(--bg); z-index:2;
+    padding:6px 0 14px;
+  }
+  .glance-page .group{margin-bottom:14px; padding:16px 18px 20px;}
+  .glance-page .deals-grid{padding:0; gap:12px; display:grid; grid-template-columns:1fr;}
+
+  .glance-controls{
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    margin-top:18px;
+  }
+  .glance-arrow{
+    width:38px; height:38px; border-radius:50%; border:1px solid var(--line-strong);
+    background:var(--surface); color:var(--cream); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color .2s, transform .1s;
+  }
+  .glance-arrow:hover{border-color:var(--gold);}
+  .glance-arrow:active{transform:scale(0.9);}
+  .glance-arrow svg{width:16px; height:16px;}
+  .glance-dots{display:flex; gap:7px;}
+  .glance-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--line-strong);
+    transition:background .2s, transform .2s; border:none; padding:0;
+  }
+  .glance-dot.active{background:var(--gold); transform:scale(1.3);}
+
+  .glance-hint{
+    text-align:center; font-family:var(--font-mono); font-size:0.72rem;
+    color:var(--muted); letter-spacing:0.04em; margin-top:14px;
+    animation:hintNudge 1.8s ease-in-out infinite;
+    transition:opacity .4s;
+  }
+  .glance-hint.hidden{opacity:0; pointer-events:none;}
+  @keyframes hintNudge{
+    0%,100%{opacity:0.55; transform:translateX(0);}
+    50%{opacity:1; transform:translateX(3px);}
+  }
+  @media(min-width:900px){.glance-hint{display:none;}}
+
   /* ---------- section framework ---------- */
   section.menu-section{padding:56px 0 8px;}
   .section-head{
@@ -801,6 +859,8 @@
     }
     .cart-drawer, .modal, .overlay, .toast{transition:none;}
     .status-dot{animation:none;}
+    .glance-hint{animation:none;}
+    .glance-carousel{scroll-behavior:auto;}
   }
 </style>
 </head>
@@ -888,6 +948,36 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/></svg>
     </a>
   </div>
+</section>
+
+<!-- ================= MENU AT A GLANCE ================= -->
+<section class="glance-section" id="menu-glance">
+  <div class="glance-head">
+    <div class="section-kicker">Swipe Through Everything</div>
+    <h2 class="section-title">Menu at a Glance</h2>
+    <p class="glance-sub">Every category, one swipe apart — add to your cart right from here, or scroll down to browse in detail.</p>
+  </div>
+
+  <div class="glance-carousel" id="glanceCarousel">
+    <div class="glance-page" data-index="0"><div class="glance-page-title">🍕 Pizzas</div><div class="glance-items" id="glance-pizzas"></div></div>
+    <div class="glance-page" data-index="1"><div class="glance-page-title">🍔 Wings &amp; Burgers</div><div class="glance-items" id="glance-wings-burgers"></div></div>
+    <div class="glance-page" data-index="2"><div class="glance-page-title">🍝 Pasta &amp; Rolls</div><div class="glance-items" id="glance-pasta-rolls"></div></div>
+    <div class="glance-page" data-index="3"><div class="glance-page-title">🥪 Sandwiches &amp; Sides</div><div class="glance-items" id="glance-sides"></div></div>
+    <div class="glance-page" data-index="4"><div class="glance-page-title">🥤 Beverages</div><div class="glance-items" id="glance-beverages"></div></div>
+    <div class="glance-page" data-index="5"><div class="glance-page-title">🍹 Bursa Bar</div><div class="glance-items" id="glance-bursa-bar"></div></div>
+    <div class="glance-page" data-index="6"><div class="glance-page-title">🎉 Deals</div><div class="glance-items deals-grid" id="glance-deals"></div></div>
+  </div>
+
+  <div class="glance-controls">
+    <button type="button" class="glance-arrow" id="glancePrev" aria-label="Previous category">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="glance-dots" id="glanceDots"></div>
+    <button type="button" class="glance-arrow" id="glanceNext" aria-label="Next category">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+  <div class="glance-hint" id="glanceHint">← Swipe to explore →</div>
 </section>
 
 <svg class="battlement battlement--thick" width="100%" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -1600,54 +1690,131 @@ function renderMenu(){
   });
 }
 
+/* =========================================================
+   MENU AT A GLANCE (swipeable carousel — reuses buildGroup/
+   buildDealCard so it shares live cart state with the main list)
+   ========================================================= */
+function renderGlanceCarousel(){
+  const glanceMap = {
+    'glance-pizzas': 'c-pizzas',
+    'glance-wings-burgers': 'c-wings-burgers',
+    'glance-pasta-rolls': 'c-pasta-rolls',
+    'glance-sides': 'c-sides',
+    'glance-beverages': 'c-beverages',
+    'glance-bursa-bar': 'c-bursa-bar'
+  };
+  Object.keys(glanceMap).forEach(glanceId => {
+    const container = document.getElementById(glanceId);
+    if(!container) return;
+    (MENU_DATA[glanceMap[glanceId]] || []).forEach(group => container.appendChild(buildGroup(group)));
+  });
+
+  const dealsGlanceContainer = document.getElementById('glance-deals');
+  if(dealsGlanceContainer){
+    DEALS_DATA.forEach(deal => dealsGlanceContainer.appendChild(buildDealCard(deal)));
+  }
+
+  setupGlanceNav();
+}
+
+function setupGlanceNav(){
+  const carousel = document.getElementById('glanceCarousel');
+  const dotsContainer = document.getElementById('glanceDots');
+  const pages = Array.from(document.querySelectorAll('.glance-page'));
+  const hint = document.getElementById('glanceHint');
+  if(!carousel || pages.length === 0) return;
+
+  pages.forEach((page, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'glance-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', `Go to category ${i + 1} of ${pages.length}`);
+    dot.addEventListener('click', () => scrollToGlancePage(i));
+    dotsContainer.appendChild(dot);
+  });
+  const dots = Array.from(dotsContainer.children);
+
+  function dismissHint(){
+    if(hint && !hint.classList.contains('hidden')){ hint.classList.add('hidden'); }
+  }
+
+  function scrollToGlancePage(index){
+    const clamped = Math.max(0, Math.min(pages.length - 1, index));
+    carousel.scrollTo({ left: clamped * carousel.offsetWidth, behavior: 'smooth' });
+  }
+
+  let glanceScrollTimer = null;
+  carousel.addEventListener('scroll', () => {
+    dismissHint();
+    clearTimeout(glanceScrollTimer);
+    glanceScrollTimer = setTimeout(() => {
+      const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    }, 80);
+  }, { passive: true });
+
+  document.getElementById('glancePrev').addEventListener('click', () => {
+    const current = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+    scrollToGlancePage(current - 1);
+    dismissHint();
+  });
+  document.getElementById('glanceNext').addEventListener('click', () => {
+    const current = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+    scrollToGlancePage(current + 1);
+    dismissHint();
+  });
+}
+
+function buildDealCard(deal){
+  const card = document.createElement('div');
+  card.className = 'deal-card';
+  card.innerHTML = `
+    <div class="deal-name">${escapeHtml(deal.name)}</div>
+    <div class="deal-price">${priceLabel(deal.price)}</div>
+    <div class="deal-items">${escapeHtml(deal.desc)}</div>
+    <div class="deal-control"></div>
+  `;
+  const controlEl = card.querySelector('.deal-control');
+  const key = cartKey('Deals', deal.name, null);
+  let lastRenderedState = null;
+
+  function renderControl(force){
+    const cartEntry = cart.find(c => c.key === key);
+    const qty = cartEntry ? cartEntry.qty : 0;
+    if(!force && qty === lastRenderedState) return;
+    lastRenderedState = qty;
+
+    if(qty > 0){
+      controlEl.innerHTML = `
+        <div class="mi-stepper">
+          <button type="button" class="mi-step-btn mi-step-minus" aria-label="Decrease quantity">−</button>
+          <span class="mi-step-qty">${qty}</span>
+          <button type="button" class="mi-step-btn mi-step-plus" aria-label="Increase quantity">+</button>
+        </div>
+      `;
+      controlEl.querySelector('.mi-step-minus').addEventListener('click', () => updateQty(key, -1));
+      controlEl.querySelector('.mi-step-plus').addEventListener('click', () => updateQty(key, 1));
+    } else {
+      controlEl.innerHTML = `
+        <button type="button" class="mi-add-pill" aria-label="Add ${escapeHtml(deal.name)} to cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add to Cart</span>
+        </button>
+      `;
+      controlEl.querySelector('.mi-add-pill').addEventListener('click', (e) => {
+        addToCart('Deals', deal.name, null, deal.price, e.currentTarget);
+      });
+    }
+  }
+
+  renderControl(true);
+  inlineControlUpdaters.push(() => renderControl(false));
+  return card;
+}
+
 function renderDeals(){
   const container = document.getElementById('c-deals');
-  DEALS_DATA.forEach(deal => {
-    const card = document.createElement('div');
-    card.className = 'deal-card';
-    card.innerHTML = `
-      <div class="deal-name">${escapeHtml(deal.name)}</div>
-      <div class="deal-price">${priceLabel(deal.price)}</div>
-      <div class="deal-items">${escapeHtml(deal.desc)}</div>
-      <div class="deal-control"></div>
-    `;
-    const controlEl = card.querySelector('.deal-control');
-    const key = cartKey('Deals', deal.name, null);
-    let lastRenderedState = null;
-
-    function renderControl(force){
-      const cartEntry = cart.find(c => c.key === key);
-      const qty = cartEntry ? cartEntry.qty : 0;
-      if(!force && qty === lastRenderedState) return;
-      lastRenderedState = qty;
-
-      if(qty > 0){
-        controlEl.innerHTML = `
-          <div class="mi-stepper">
-            <button type="button" class="mi-step-btn mi-step-minus" aria-label="Decrease quantity">−</button>
-            <span class="mi-step-qty">${qty}</span>
-            <button type="button" class="mi-step-btn mi-step-plus" aria-label="Increase quantity">+</button>
-          </div>
-        `;
-        controlEl.querySelector('.mi-step-minus').addEventListener('click', () => updateQty(key, -1));
-        controlEl.querySelector('.mi-step-plus').addEventListener('click', () => updateQty(key, 1));
-      } else {
-        controlEl.innerHTML = `
-          <button type="button" class="mi-add-pill" aria-label="Add ${escapeHtml(deal.name)} to cart">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
-            <span>Add to Cart</span>
-          </button>
-        `;
-        controlEl.querySelector('.mi-add-pill').addEventListener('click', (e) => {
-          addToCart('Deals', deal.name, null, deal.price, e.currentTarget);
-        });
-      }
-    }
-
-    renderControl(true);
-    inlineControlUpdaters.push(() => renderControl(false));
-    container.appendChild(card);
-  });
+  DEALS_DATA.forEach(deal => container.appendChild(buildDealCard(deal)));
 }
 
 /* =========================================================
@@ -2016,6 +2183,7 @@ menuSearchInput.addEventListener('keydown', (e) => {
 document.getElementById('year').textContent = new Date().getFullYear();
 renderMenu();
 renderDeals();
+renderGlanceCarousel();
 renderCart();
 updateCartCount();
 checkLastOrder();
