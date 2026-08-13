@@ -394,6 +394,7 @@
     opacity:0; transform:translateY(28px);
   }
   .group.revealed{opacity:1; transform:translateY(0); transition:opacity .7s ease, transform .7s ease, border-color .3s, box-shadow .3s;}
+  .group.revealed.search-dim{opacity:0.4;}
   .group:hover{border-color:var(--line-strong); box-shadow:0 16px 40px rgba(0,0,0,0.35); transform:translateY(-3px);}
   .group.revealed:hover{transform:translateY(-3px);}
   .group-head{
@@ -421,10 +422,11 @@
   .menu-item{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
     padding:9px 8px; border-radius:10px;
-    transition:background .2s;
+    transition:background .2s, opacity .25s ease, filter .25s ease;
     flex-wrap:wrap;
   }
   .menu-item:hover{background:var(--surface-2);}
+  .menu-item.search-dim{opacity:0.32; filter:grayscale(0.5);}
   .mi-main{display:flex; flex-direction:column; gap:5px; flex:1; min-width:150px;}
   .mi-name{font-size:0.96rem; color:var(--cream); font-weight:500;}
   .bestseller-badge{
@@ -504,6 +506,7 @@
     display:flex; flex-direction:column;
   }
   .deal-card.revealed{opacity:1; transform:translateY(0) scale(1); transition:opacity .6s ease, transform .6s ease;}
+  .deal-card.revealed.search-dim{opacity:0.35;}
   .deal-card:hover{transform:translateY(-6px) scale(1.02); border-color:var(--gold); box-shadow:0 18px 44px rgba(0,0,0,0.45);}
   .deal-card:active{transform:scale(0.98);}
   .deal-card::before{
@@ -1942,7 +1945,6 @@ const SECTION_SEARCH_ALIASES = {
 
 function applyMenuSearch(query){
   const q = query.trim().toLowerCase();
-  let anyVisible = false;
   let matchCount = 0;
 
   document.querySelectorAll('section.menu-section').forEach(section => {
@@ -1955,14 +1957,11 @@ function applyMenuSearch(query){
       group.querySelectorAll('.menu-item').forEach(row => {
         const name = (row.querySelector('.mi-name')?.textContent || '').toLowerCase();
         const match = !q || sectionWideMatch || name.includes(q);
-        row.style.display = match ? '' : 'none';
-        if(match){ groupHasMatch = true; matchCount++; }
+        row.classList.toggle('search-dim', q.length > 0 && !match);
+        if(match){ groupHasMatch = true; if(q) matchCount++; }
       });
-      group.style.display = groupHasMatch ? '' : 'none';
-      if(groupHasMatch){
-        anyVisible = true;
-        group.classList.add('revealed');
-      }
+      group.classList.toggle('search-dim', q.length > 0 && !groupHasMatch);
+      if(groupHasMatch){ group.classList.add('revealed'); } // ensure visible even if never scrolled into view
     });
   });
 
@@ -1971,18 +1970,18 @@ function applyMenuSearch(query){
     const name = (card.querySelector('.deal-name')?.textContent || '').toLowerCase();
     const desc = (card.querySelector('.deal-items')?.textContent || '').toLowerCase();
     const match = !q || dealsAliasMatch || name.includes(q) || desc.includes(q);
-    card.style.display = match ? '' : 'none';
-    if(match){ anyVisible = true; matchCount++; card.classList.add('revealed'); }
+    card.classList.toggle('search-dim', q.length > 0 && !match);
+    if(match){ if(q) matchCount++; card.classList.add('revealed'); }
   });
 
-  noResultsEl.classList.toggle('show', q.length > 0 && !anyVisible);
+  noResultsEl.classList.toggle('show', q.length > 0 && matchCount === 0);
   searchResultCount.textContent = q.length > 0 ? `${matchCount} found` : '';
 }
 
 function scrollToFirstMatch(){
-  const visibleGroups = Array.from(document.querySelectorAll('.group')).filter(g => g.style.display !== 'none');
-  const visibleDeals = Array.from(document.querySelectorAll('.deal-card')).filter(d => d.style.display !== 'none');
-  const candidates = [...visibleGroups, ...visibleDeals];
+  const matchedItems = Array.from(document.querySelectorAll('.menu-item')).filter(el => !el.classList.contains('search-dim'));
+  const matchedDeals = Array.from(document.querySelectorAll('.deal-card')).filter(el => !el.classList.contains('search-dim'));
+  const candidates = [...matchedItems, ...matchedDeals];
   if(candidates.length === 0) return;
 
   let target = candidates[0];
@@ -2006,7 +2005,7 @@ menuSearchInput.addEventListener('input', (e) => {
 menuSearchInput.addEventListener('keydown', (e) => {
   if(e.key === 'Enter'){
     clearTimeout(searchScrollTimer);
-    scrollToFirstMatch();
+    if(menuSearchInput.value.trim().length > 0){ scrollToFirstMatch(); }
     menuSearchInput.blur(); // dismiss mobile keyboard
   }
 });
