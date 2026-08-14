@@ -389,6 +389,10 @@
     position:sticky; top:0; background:var(--bg); z-index:2;
     padding:6px 0 14px;
   }
+  .glance-count{
+    font-family:var(--font-mono); font-weight:500; font-size:0.68rem;
+    color:var(--muted); letter-spacing:0.02em;
+  }
   .glance-list-group{margin-bottom:20px;}
   .glance-list-group-name{
     font-family:var(--font-display); font-weight:600; font-size:0.95rem; color:var(--gold-bright);
@@ -399,6 +403,13 @@
   .glance-list-name{font-size:0.85rem; color:var(--cream); white-space:nowrap;}
   .glance-list-dots{flex:1; min-width:10px; border-bottom:1px dotted var(--line-strong); transform:translateY(-3px);}
   .glance-list-price{font-family:var(--font-mono); font-size:0.78rem; font-weight:600; color:var(--gold-bright); white-space:nowrap;}
+
+  .glance-list-row.glance-bestseller{
+    background:linear-gradient(90deg, rgba(230,172,44,0.10), transparent 85%);
+    border-radius:6px; margin:0 -6px; padding:4px 6px;
+  }
+  .glance-list-row.glance-bestseller .glance-list-name{font-weight:700; color:var(--gold-bright);}
+  .glance-fire{filter:drop-shadow(0 0 3px rgba(230,172,44,0.6));}
 
   .glance-deal-row{
     display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
@@ -984,38 +995,38 @@
     <p class="glance-sub">Every category, one swipe apart — add to your cart right from here, or scroll down to browse in detail.</p>
   </div>
 
-  <div class="glance-carousel" id="glanceCarousel">
-    <div class="glance-page" data-index="0">
+  <div class="glance-carousel" id="glanceCarousel" tabindex="0" role="region" aria-label="Menu categories, swipeable. Use left and right arrow keys to navigate.">
+    <div class="glance-page" id="glance-page-0" data-index="0">
       <div class="glance-page-title">🍕 Pizzas</div>
       <div class="glance-items" id="glance-pizzas"></div>
       <button type="button" class="glance-jump-btn" data-target="pizzas">View &amp; Order →</button>
     </div>
-    <div class="glance-page" data-index="1">
+    <div class="glance-page" id="glance-page-1" data-index="1">
       <div class="glance-page-title">🍔 Wings &amp; Burgers</div>
       <div class="glance-items" id="glance-wings-burgers"></div>
       <button type="button" class="glance-jump-btn" data-target="wings-burgers">View &amp; Order →</button>
     </div>
-    <div class="glance-page" data-index="2">
+    <div class="glance-page" id="glance-page-2" data-index="2">
       <div class="glance-page-title">🍝 Pasta &amp; Rolls</div>
       <div class="glance-items" id="glance-pasta-rolls"></div>
       <button type="button" class="glance-jump-btn" data-target="pasta-rolls">View &amp; Order →</button>
     </div>
-    <div class="glance-page" data-index="3">
+    <div class="glance-page" id="glance-page-3" data-index="3">
       <div class="glance-page-title">🥪 Sandwiches &amp; Sides</div>
       <div class="glance-items" id="glance-sides"></div>
       <button type="button" class="glance-jump-btn" data-target="sides">View &amp; Order →</button>
     </div>
-    <div class="glance-page" data-index="4">
+    <div class="glance-page" id="glance-page-4" data-index="4">
       <div class="glance-page-title">🥤 Beverages</div>
       <div class="glance-items" id="glance-beverages"></div>
       <button type="button" class="glance-jump-btn" data-target="beverages">View &amp; Order →</button>
     </div>
-    <div class="glance-page" data-index="5">
+    <div class="glance-page" id="glance-page-5" data-index="5">
       <div class="glance-page-title">🍹 Bursa Bar</div>
       <div class="glance-items" id="glance-bursa-bar"></div>
       <button type="button" class="glance-jump-btn" data-target="bursa-bar">View &amp; Order →</button>
     </div>
-    <div class="glance-page" data-index="6">
+    <div class="glance-page" id="glance-page-6" data-index="6">
       <div class="glance-page-title">🎉 Deals</div>
       <div class="glance-items" id="glance-deals"></div>
       <button type="button" class="glance-jump-btn" data-target="deals">View &amp; Order →</button>
@@ -1026,7 +1037,7 @@
     <button type="button" class="glance-arrow" id="glancePrev" aria-label="Previous category">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <div class="glance-dots" id="glanceDots"></div>
+    <div class="glance-dots" id="glanceDots" role="tablist" aria-label="Category pages"></div>
     <button type="button" class="glance-arrow" id="glanceNext" aria-label="Next category">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
     </button>
@@ -1765,9 +1776,9 @@ function buildGlanceListGroup(group){
       : `Rs ${priceArr[0]}`;
 
     const row = document.createElement('div');
-    row.className = 'glance-list-row';
+    row.className = 'glance-list-row' + (item.bestseller ? ' glance-bestseller' : '');
     row.innerHTML = `
-      <span class="glance-list-name">${escapeHtml(displayName)}${item.bestseller ? ' 🔥' : ''}</span>
+      <span class="glance-list-name">${escapeHtml(displayName)}${item.bestseller ? ' <span class="glance-fire">🔥</span>' : ''}</span>
       <span class="glance-list-dots"></span>
       <span class="glance-list-price">${priceText}</span>
     `;
@@ -1790,6 +1801,17 @@ function buildGlanceDealRow(deal){
   return row;
 }
 
+function setGlanceTitleCount(glanceId, count){
+  const container = document.getElementById(glanceId);
+  const page = container && container.closest('.glance-page');
+  const titleEl = page && page.querySelector('.glance-page-title');
+  if(!titleEl) return;
+  const countSpan = document.createElement('span');
+  countSpan.className = 'glance-count';
+  countSpan.textContent = ` · ${count} item${count === 1 ? '' : 's'}`;
+  titleEl.appendChild(countSpan);
+}
+
 function renderGlanceCarousel(){
   const glanceMap = {
     'glance-pizzas': 'c-pizzas',
@@ -1802,12 +1824,17 @@ function renderGlanceCarousel(){
   Object.keys(glanceMap).forEach(glanceId => {
     const container = document.getElementById(glanceId);
     if(!container) return;
-    (MENU_DATA[glanceMap[glanceId]] || []).forEach(group => container.appendChild(buildGlanceListGroup(group)));
+    const groups = MENU_DATA[glanceMap[glanceId]] || [];
+    groups.forEach(group => container.appendChild(buildGlanceListGroup(group)));
+
+    const itemCount = groups.reduce((sum, g) => sum + g.items.length, 0);
+    setGlanceTitleCount(glanceId, itemCount);
   });
 
   const dealsGlanceContainer = document.getElementById('glance-deals');
   if(dealsGlanceContainer){
     DEALS_DATA.forEach(deal => dealsGlanceContainer.appendChild(buildGlanceDealRow(deal)));
+    setGlanceTitleCount('glance-deals', DEALS_DATA.length);
   }
 
   // "View & Order" jump buttons — scroll down to the real interactive section
@@ -1829,10 +1856,18 @@ function setupGlanceNav(){
   if(!carousel || pages.length === 0) return;
 
   pages.forEach((page, i) => {
+    const titleText = page.querySelector('.glance-page-title')?.childNodes[0]?.textContent?.trim() || `Category ${i + 1}`;
+    page.setAttribute('role', 'group');
+    page.setAttribute('aria-roledescription', 'slide');
+    page.setAttribute('aria-label', `Slide ${i + 1} of ${pages.length}: ${titleText}`);
+
     const dot = document.createElement('button');
     dot.type = 'button';
     dot.className = 'glance-dot' + (i === 0 ? ' active' : '');
-    dot.setAttribute('aria-label', `Go to category ${i + 1} of ${pages.length}`);
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', titleText);
+    dot.setAttribute('aria-controls', page.id);
+    dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
     dot.addEventListener('click', () => scrollToGlancePage(i));
     dotsContainer.appendChild(dot);
   });
@@ -1847,13 +1882,21 @@ function setupGlanceNav(){
     carousel.scrollTo({ left: clamped * carousel.offsetWidth, behavior: 'smooth' });
   }
 
+  function setActiveDot(index){
+    dots.forEach((d, i) => {
+      const isActive = i === index;
+      d.classList.toggle('active', isActive);
+      d.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+  }
+
   let glanceScrollTimer = null;
   carousel.addEventListener('scroll', () => {
     dismissHint();
     clearTimeout(glanceScrollTimer);
     glanceScrollTimer = setTimeout(() => {
       const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
-      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      setActiveDot(index);
     }, 80);
   }, { passive: true });
 
@@ -1866,6 +1909,13 @@ function setupGlanceNav(){
     const current = Math.round(carousel.scrollLeft / carousel.offsetWidth);
     scrollToGlancePage(current + 1);
     dismissHint();
+  });
+
+  // Keyboard navigation when the carousel itself is focused
+  carousel.addEventListener('keydown', (e) => {
+    const current = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+    if(e.key === 'ArrowRight'){ e.preventDefault(); scrollToGlancePage(current + 1); dismissHint(); }
+    else if(e.key === 'ArrowLeft'){ e.preventDefault(); scrollToGlancePage(current - 1); dismissHint(); }
   });
 }
 
